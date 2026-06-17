@@ -37,9 +37,9 @@ export default function WaterBottle({ percentage, currentMl, goalMl, size = 'lar
       >
         <defs>
           <linearGradient id={`waterGrad-${size}`} x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#60A5FA" />
+            <stop offset="0%" stopColor="#BAE6FD" />
             <stop offset="50%" stopColor="#3B82F6" />
-            <stop offset="100%" stopColor="#2563EB" />
+            <stop offset="100%" stopColor="#1E3A8A" />
           </linearGradient>
           <linearGradient id={`bottleGrad-${size}`} x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#F1F5F9" />
@@ -88,7 +88,7 @@ export default function WaterBottle({ percentage, currentMl, goalMl, size = 'lar
             cy={200 - waterHeight * 1.5}
             rx="38"
             ry="4"
-            fill="#93C5FD"
+            fill="#BAE6FD"
             opacity="0.6"
             style={{
               transition: 'cy 1s ease-out',
@@ -101,7 +101,7 @@ export default function WaterBottle({ percentage, currentMl, goalMl, size = 'lar
             cy={200 - waterHeight * 1.5 + 3}
             rx="36"
             ry="3"
-            fill="#60A5FA"
+            fill="#3B82F6"
             opacity="0.4"
             style={{
               transition: 'cy 1s ease-out',
@@ -142,7 +142,7 @@ export default function WaterBottle({ percentage, currentMl, goalMl, size = 'lar
         <div style={{
           fontSize: cfg.fontSize,
           fontWeight: 800,
-          background: 'linear-gradient(135deg, #2563EB, #3B82F6)',
+          background: '#0F172A',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           lineHeight: 1.1,

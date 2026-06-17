@@ -46,9 +46,9 @@
 
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 50%, #F0F9FF 100%);
+  background: #F8FAFC;
   min-height: 100vh;
-  color: #334155;
+  color: #0F172A;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -203,17 +203,15 @@ body {
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: #FFFFFF;
+  border: 1px solid #F1F5F9;
   border-radius: 20px;
-  box-shadow: 0 8px 32px rgba(37, 99, 235, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.04);
   transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .glass-card:hover {
-  box-shadow: 0 12px 40px rgba(37, 99, 235, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
 }
 
 .glass-card-solid {
@@ -225,22 +223,24 @@ body {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #2563EB 0%, #3B82F6 50%, #60A5FA 100%);
+  background: #0F172A;
   color: white;
   border: none;
-  border-radius: 14px;
+  border-radius: 12px;
   padding: 12px 28px;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 15px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
   font-family: 'Inter', sans-serif;
+  letter-spacing: 0.3px;
 }
 
 .btn-primary:hover {
+  background: #1E293B;
   transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(37, 99, 235, 0.4);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.2);
 }
 
 .btn-primary:active {
@@ -248,10 +248,10 @@ body {
 }
 
 .btn-secondary {
-  background: #EFF6FF;
-  color: #2563EB;
-  border: 1px solid #BFDBFE;
-  border-radius: 14px;
+  background: #F8FAFC;
+  color: #0F172A;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
   padding: 10px 24px;
   font-weight: 500;
   font-size: 14px;
@@ -261,15 +261,12 @@ body {
 }
 
 .btn-secondary:hover {
-  background: #DBEAFE;
-  border-color: #93C5FD;
+  background: #F1F5F9;
+  border-color: #CBD5E1;
 }
 
 .text-gradient {
-  background: linear-gradient(135deg, #2563EB 0%, #3B82F6 50%, #0EA5E9 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #0F172A;
 }
 
 /* ===== Modal Overlay ===== */

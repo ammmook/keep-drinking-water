@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Droplet, Coffee, CupSoda, GlassWater, Calendar, Clock, Ruler, X, FileText, Container, CheckCircle } from 'lucide-react';
 
 interface LogWaterModalProps {
   isOpen: boolean;
@@ -14,21 +15,21 @@ interface LogWaterModalProps {
 }
 
 const volumePresets = [
-  { label: '250ml', value: 250, icon: '🥤' },
-  { label: '500ml', value: 500, icon: '🧊' },
-  { label: '1000ml', value: 1000, icon: '🫗' },
+  { label: '250ml', value: 250, icon: <GlassWater size={20} /> },
+  { label: '500ml', value: 500, icon: <Droplet size={20} /> },
+  { label: '1000ml', value: 1000, icon: <Droplet size={20} fill="currentColor" /> },
 ];
 
-const unitOptions: { value: 'ml' | 'glass' | 'bottle'; icon: string; label: string }[] = [
-  { value: 'ml', icon: '💧', label: 'ml' },
-  { value: 'glass', icon: '🥛', label: 'แก้ว' },
-  { value: 'bottle', icon: '🍶', label: 'ขวด' },
+const unitOptions: { value: 'ml' | 'glass' | 'bottle'; icon: React.ReactNode; label: string }[] = [
+  { value: 'ml', icon: <Droplet size={16} />, label: 'ml' },
+  { value: 'glass', icon: <GlassWater size={16} />, label: 'แก้ว' },
+  { value: 'bottle', icon: <Container size={16} />, label: 'ขวด' },
 ];
 
-const typeOptions: { value: 'water' | 'sweet' | 'other'; icon: string; label: string }[] = [
-  { value: 'water', icon: '💧', label: 'น้ำเปล่า' },
-  { value: 'sweet', icon: '🧃', label: 'น้ำหวาน' },
-  { value: 'other', icon: '☕', label: 'อื่นๆ' },
+const typeOptions: { value: 'water' | 'sweet' | 'other'; icon: React.ReactNode; label: string }[] = [
+  { value: 'water', icon: <Droplet size={16} />, label: 'น้ำเปล่า' },
+  { value: 'sweet', icon: <CupSoda size={16} />, label: 'น้ำหวาน' },
+  { value: 'other', icon: <Coffee size={16} />, label: 'อื่นๆ' },
 ];
 
 function getToday(): string {
@@ -79,7 +80,9 @@ export default function LogWaterModal({ isOpen, onClose, onSave }: LogWaterModal
     fontWeight: 600,
     color: '#64748B',
     marginBottom: '8px',
-    display: 'block',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
     textTransform: 'uppercase',
     letterSpacing: '0.5px',
   };
@@ -110,7 +113,7 @@ export default function LogWaterModal({ isOpen, onClose, onSave }: LogWaterModal
           marginBottom: '24px',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ fontSize: '28px' }}>💧</span>
+            <Droplet size={28} color="#0EA5E9" />
             <h2 style={{
               fontSize: '20px',
               fontWeight: 700,
@@ -131,15 +134,15 @@ export default function LogWaterModal({ isOpen, onClose, onSave }: LogWaterModal
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >✕</button>
+            justifyContent: 'center',
+          }}
+          ><X size={18} /></button>
         </div>
 
         {/* Date & Time */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '20px' }}>
           <div>
-            <label style={labelStyle}>📅 วันที่</label>
+            <label style={labelStyle}><Calendar size={14} /> วันที่</label>
             <input
               type="date"
               value={date}
@@ -149,7 +152,7 @@ export default function LogWaterModal({ isOpen, onClose, onSave }: LogWaterModal
             />
           </div>
           <div>
-            <label style={labelStyle}>🕐 เวลา</label>
+            <label style={labelStyle}><Clock size={14} /> เวลา</label>
             <input
               type="time"
               value={time}
@@ -161,7 +164,7 @@ export default function LogWaterModal({ isOpen, onClose, onSave }: LogWaterModal
 
         {/* Volume Presets */}
         <div style={{ marginBottom: '20px' }}>
-          <label style={labelStyle}>📏 ปริมาณ</label>
+          <label style={labelStyle}><Ruler size={14} /> ปริมาณ</label>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', marginBottom: '10px' }}>
             {volumePresets.map((p) => (
               <button
@@ -185,7 +188,7 @@ export default function LogWaterModal({ isOpen, onClose, onSave }: LogWaterModal
                   fontFamily: 'Inter, sans-serif',
                 }}
               >
-                <span style={{ fontSize: '20px' }}>{p.icon}</span>
+                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '24px' }}>{p.icon}</span>
                 <span style={{
                   fontSize: '13px',
                   fontWeight: 600,
@@ -212,7 +215,7 @@ export default function LogWaterModal({ isOpen, onClose, onSave }: LogWaterModal
 
         {/* Unit */}
         <div style={{ marginBottom: '20px' }}>
-          <label style={labelStyle}>📐 หน่วย</label>
+          <label style={labelStyle}><Ruler size={14} /> หน่วย</label>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
             {unitOptions.map((u) => (
               <button
@@ -232,7 +235,7 @@ export default function LogWaterModal({ isOpen, onClose, onSave }: LogWaterModal
                   fontFamily: 'Inter, sans-serif',
                 }}
               >
-                <span style={{ fontSize: '16px' }}>{u.icon}</span>
+                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{u.icon}</span>
                 <span style={{
                   fontSize: '13px',
                   fontWeight: 600,
@@ -245,7 +248,7 @@ export default function LogWaterModal({ isOpen, onClose, onSave }: LogWaterModal
 
         {/* Type */}
         <div style={{ marginBottom: '20px' }}>
-          <label style={labelStyle}>🥤 ประเภท</label>
+          <label style={labelStyle}><CupSoda size={14} /> ประเภท</label>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
             {typeOptions.map((t) => (
               <button
@@ -265,7 +268,7 @@ export default function LogWaterModal({ isOpen, onClose, onSave }: LogWaterModal
                   fontFamily: 'Inter, sans-serif',
                 }}
               >
-                <span style={{ fontSize: '16px' }}>{t.icon}</span>
+                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t.icon}</span>
                 <span style={{
                   fontSize: '13px',
                   fontWeight: 600,
@@ -278,7 +281,7 @@ export default function LogWaterModal({ isOpen, onClose, onSave }: LogWaterModal
 
         {/* Note */}
         <div style={{ marginBottom: '24px' }}>
-          <label style={labelStyle}>📝 หมายเหตุ</label>
+          <label style={labelStyle}><FileText size={14} /> หมายเหตุ</label>
           <input
             type="text"
             placeholder="รายละเอียดเพิ่มเติม..."
@@ -318,9 +321,13 @@ export default function LogWaterModal({ isOpen, onClose, onSave }: LogWaterModal
             padding: '16px',
             fontSize: '16px',
             borderRadius: '16px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
           }}
         >
-          💧 บันทึก
+          <CheckCircle size={18} /> บันทึก
         </button>
       </div>
     </div>

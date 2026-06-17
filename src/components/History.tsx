@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import type { ViewMode, WaterLog, UserProfile } from '../types';
+import { Droplet, Coffee, CupSoda, Calendar as CalendarIcon, BarChart2, TrendingUp, Trash2, Smile, Frown, Moon, ChevronLeft, ChevronRight, Target } from 'lucide-react';
 
 interface HistoryProps {
   profile: UserProfile;
@@ -10,7 +11,7 @@ interface HistoryProps {
   onDeleteLog: (id: string) => void;
 }
 
-const typeIcons: Record<string, string> = { water: '💧', sweet: '🧃', other: '☕' };
+const typeIcons: Record<string, React.ReactNode> = { water: <Droplet size={18} color="#0EA5E9" />, sweet: <CupSoda size={18} color="#F59E0B" />, other: <Coffee size={18} color="#8B5CF6" /> };
 const monthNamesFull = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
 const monthNamesShort = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
 const dayNames = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
@@ -196,8 +197,8 @@ export default function History({
     <div className="animate-fadeIn" style={{ padding: '28px', maxWidth: '960px', margin: '0 auto' }}>
       {/* Header */}
       <div style={{ marginBottom: '24px' }}>
-        <h1 style={{ fontSize: '26px', fontWeight: 800, color: '#1E293B', margin: 0 }}>
-          📅 ประวัติการดื่มน้ำ
+        <h1 style={{ fontSize: '26px', fontWeight: 800, color: '#1E293B', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <CalendarIcon size={28} color="#0F172A" /> ประวัติการดื่มน้ำ
         </h1>
         <p style={{ fontSize: '13px', color: '#94A3B8', marginTop: '4px' }}>
           ดูย้อนหลังการดื่มน้ำของคุณ
@@ -214,8 +215,8 @@ export default function History({
         marginBottom: '24px',
       }}>
         {(['day', 'month', 'year'] as ViewMode[]).map((mode) => (
-          <button key={mode} onClick={() => setViewMode(mode)} style={tabStyle(viewMode === mode)}>
-            {mode === 'day' ? '📅 รายวัน' : mode === 'month' ? '📊 รายเดือน' : '📈 รายปี'}
+          <button key={mode} onClick={() => setViewMode(mode)} style={{...tabStyle(viewMode === mode), display: 'flex', alignItems: 'center', gap: '6px'}}>
+            {mode === 'day' ? <><CalendarIcon size={16} /> รายวัน</> : mode === 'month' ? <><BarChart2 size={16} /> รายเดือน</> : <><TrendingUp size={16} /> รายปี</>}
           </button>
         ))}
       </div>
@@ -227,11 +228,11 @@ export default function History({
           <div className="glass-card" style={{ padding: '24px' }}>
             {/* Month navigation */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-              <button onClick={prevMonth} style={navBtnStyle}>‹</button>
+              <button onClick={prevMonth} style={navBtnStyle}><ChevronLeft size={20} /></button>
               <span style={{ fontSize: '15px', fontWeight: 700, color: '#1E293B' }}>
                 {monthNamesFull[selectedMonth - 1]} {selectedYear + 543}
               </span>
-              <button onClick={nextMonth} style={navBtnStyle}>›</button>
+              <button onClick={nextMonth} style={navBtnStyle}><ChevronRight size={20} /></button>
             </div>
 
             {/* Day names header */}
@@ -251,7 +252,6 @@ export default function History({
                     const total = getDailyTotal(dateStr);
                     const pct = (total / profile.dailyGoalMl) * 100;
                     const isSelected = dateStr === selectedDate;
-                    const isToday = dateStr === getToday();
                     return (
                       <MiniBottle
                         key={day}
@@ -314,8 +314,8 @@ export default function History({
                     : '1px solid #E2E8F0',
                 marginBottom: '16px',
               }}>
-                <span style={{ fontSize: '24px' }}>
-                  {selectedTotal >= profile.dailyGoalMl ? '😊' : selectedTotal > 0 ? '😢' : '💤'}
+                <span style={{ fontSize: '24px', display: 'flex', justifyContent: 'center' }}>
+                  {selectedTotal >= profile.dailyGoalMl ? <Smile size={32} color="#059669" /> : selectedTotal > 0 ? <Frown size={32} color="#D97706" /> : <Moon size={32} color="#94A3B8" />}
                 </span>
                 <span style={{
                   fontSize: '12px', fontWeight: 600, marginLeft: '8px',
@@ -348,7 +348,7 @@ export default function History({
                     }}
                       onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = '#EF4444'; }}
                       onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = '#CBD5E1'; }}
-                    >🗑️</button>
+                    ><Trash2 size={16} /></button>
                   </div>
                 ))}
               </div>
@@ -362,11 +362,11 @@ export default function History({
         <div className="glass-card" style={{ padding: '28px' }}>
           {/* Month navigation */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
-            <button onClick={prevMonth} style={navBtnStyle}>‹</button>
+            <button onClick={prevMonth} style={navBtnStyle}><ChevronLeft size={20} /></button>
             <span style={{ fontSize: '16px', fontWeight: 700, color: '#1E293B' }}>
               {monthNamesFull[selectedMonth - 1]} {selectedYear + 543}
             </span>
-            <button onClick={nextMonth} style={navBtnStyle}>›</button>
+            <button onClick={nextMonth} style={navBtnStyle}><ChevronRight size={20} /></button>
           </div>
 
           {/* Bottles grid — each day as a bottle */}
@@ -405,15 +405,15 @@ export default function History({
                 <>
                   <div style={{ background: '#EFF6FF', borderRadius: '12px', padding: '12px 20px', textAlign: 'center' }}>
                     <div style={{ fontSize: '20px', fontWeight: 800, color: '#2563EB' }}>{(totalMl / 1000).toFixed(1)}L</div>
-                    <div style={{ fontSize: '11px', color: '#64748B' }}>💧 รวมทั้งเดือน</div>
+                    <div style={{ fontSize: '11px', color: '#64748B', display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'center' }}><Droplet size={12} /> รวมทั้งเดือน</div>
                   </div>
                   <div style={{ background: '#F0F9FF', borderRadius: '12px', padding: '12px 20px', textAlign: 'center' }}>
                     <div style={{ fontSize: '20px', fontWeight: 800, color: '#0EA5E9' }}>{daysWithData > 0 ? Math.round(totalMl / daysWithData) : 0}ml</div>
-                    <div style={{ fontSize: '11px', color: '#64748B' }}>📊 เฉลี่ย/วัน</div>
+                    <div style={{ fontSize: '11px', color: '#64748B', display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'center' }}><BarChart2 size={12} /> เฉลี่ย/วัน</div>
                   </div>
                   <div style={{ background: '#ECFDF5', borderRadius: '12px', padding: '12px 20px', textAlign: 'center' }}>
                     <div style={{ fontSize: '20px', fontWeight: 800, color: '#059669' }}>{daysGoalReached}</div>
-                    <div style={{ fontSize: '11px', color: '#64748B' }}>🎯 วันถึงเป้า</div>
+                    <div style={{ fontSize: '11px', color: '#64748B', display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'center' }}><Target size={12} /> วันถึงเป้า</div>
                   </div>
                 </>
               );
@@ -426,7 +426,7 @@ export default function History({
               <span style={{ width: '10px', height: '10px', borderRadius: '3px', background: 'linear-gradient(to bottom, #93C5FD, #2563EB)' }} /> ไม่ถึงเป้า
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <span style={{ width: '10px', height: '10px', borderRadius: '3px', background: 'linear-gradient(to bottom, #4ADE80, #16A34A)' }} /> ถึงเป้าหมาย ✅
+              <span style={{ width: '10px', height: '10px', borderRadius: '3px', background: 'linear-gradient(to bottom, #4ADE80, #16A34A)' }} /> ถึงเป้าหมาย
             </span>
           </div>
         </div>
@@ -437,11 +437,11 @@ export default function History({
         <div className="glass-card" style={{ padding: '28px' }}>
           {/* Year navigation */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px' }}>
-            <button onClick={() => setSelectedYear(y => y - 1)} style={navBtnStyle}>‹</button>
+            <button onClick={() => setSelectedYear(y => y - 1)} style={navBtnStyle}><ChevronLeft size={20} /></button>
             <span style={{ fontSize: '16px', fontWeight: 700, color: '#1E293B' }}>
               ปี {selectedYear + 543}
             </span>
-            <button onClick={() => setSelectedYear(y => y + 1)} style={navBtnStyle}>›</button>
+            <button onClick={() => setSelectedYear(y => y + 1)} style={navBtnStyle}><ChevronRight size={20} /></button>
           </div>
 
           {/* 12 months as large bottles */}
@@ -481,15 +481,15 @@ export default function History({
                 <>
                   <div style={{ background: '#EFF6FF', borderRadius: '12px', padding: '14px 24px', textAlign: 'center' }}>
                     <div style={{ fontSize: '24px', fontWeight: 800, color: '#2563EB' }}>{(totalMl / 1000).toFixed(1)}L</div>
-                    <div style={{ fontSize: '12px', color: '#64748B' }}>💧 รวมทั้งปี</div>
+                    <div style={{ fontSize: '12px', color: '#64748B', display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'center' }}><Droplet size={14} /> รวมทั้งปี</div>
                   </div>
                   <div style={{ background: '#F0F9FF', borderRadius: '12px', padding: '14px 24px', textAlign: 'center' }}>
                     <div style={{ fontSize: '24px', fontWeight: 800, color: '#0EA5E9' }}>{monthsWithData > 0 ? (totalMl / monthsWithData / 1000).toFixed(1) : 0}L</div>
-                    <div style={{ fontSize: '12px', color: '#64748B' }}>📊 เฉลี่ย/เดือน</div>
+                    <div style={{ fontSize: '12px', color: '#64748B', display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'center' }}><BarChart2 size={14} /> เฉลี่ย/เดือน</div>
                   </div>
                   <div style={{ background: '#ECFDF5', borderRadius: '12px', padding: '14px 24px', textAlign: 'center' }}>
                     <div style={{ fontSize: '24px', fontWeight: 800, color: '#059669' }}>{monthsWithData}</div>
-                    <div style={{ fontSize: '12px', color: '#64748B' }}>📅 เดือนที่มีข้อมูล</div>
+                    <div style={{ fontSize: '12px', color: '#64748B', display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'center' }}><CalendarIcon size={14} /> เดือนที่มีข้อมูล</div>
                   </div>
                 </>
               );

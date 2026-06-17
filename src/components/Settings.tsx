@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { UserProfile } from '../types';
+import { Settings as SettingsIcon, Target, User, Calendar, AlertTriangle, Trash2, CheckCircle, Save } from 'lucide-react';
 
 interface SettingsProps {
   profile: UserProfile;
@@ -27,8 +28,8 @@ export default function Settings({ profile, onUpdateGoal, onClearData }: Setting
     <div className="animate-fadeIn" style={{ padding: '28px', maxWidth: '600px', margin: '0 auto' }}>
       {/* Header */}
       <div style={{ marginBottom: '28px' }}>
-        <h1 style={{ fontSize: '26px', fontWeight: 800, color: '#1E293B', margin: 0 }}>
-          ⚙️ ตั้งค่า
+        <h1 style={{ fontSize: '26px', fontWeight: 800, color: '#1E293B', margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <SettingsIcon size={28} color="#0F172A" /> ตั้งค่า
         </h1>
       </div>
 
@@ -43,7 +44,7 @@ export default function Settings({ profile, onUpdateGoal, onClearData }: Setting
           alignItems: 'center',
           gap: '8px',
         }}>
-          🎯 เป้าหมายประจำวัน
+          <Target size={18} color="#0F172A" /> เป้าหมายประจำวัน
         </h3>
 
         <div style={{
@@ -78,9 +79,7 @@ export default function Settings({ profile, onUpdateGoal, onClearData }: Setting
             <span style={{
               fontSize: '32px',
               fontWeight: 800,
-              background: 'linear-gradient(135deg, #2563EB, #3B82F6)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
+              color: '#0F172A',
             }}>{goalMl.toLocaleString()}</span>
             <span style={{ fontSize: '16px', color: '#94A3B8', marginLeft: '4px', fontWeight: 500 }}>ml</span>
           </div>
@@ -117,10 +116,13 @@ export default function Settings({ profile, onUpdateGoal, onClearData }: Setting
             padding: '14px',
             borderRadius: '14px',
             opacity: goalMl === profile.dailyGoalMl ? 0.5 : 1,
-            cursor: goalMl === profile.dailyGoalMl ? 'not-allowed' : 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
           }}
         >
-          {saved ? '✅ บันทึกแล้ว!' : '💾 บันทึกเป้าหมาย'}
+          {saved ? <><CheckCircle size={18} /> บันทึกแล้ว!</> : <><Save size={18} /> บันทึกเป้าหมาย</>}
         </button>
       </div>
 
@@ -135,7 +137,7 @@ export default function Settings({ profile, onUpdateGoal, onClearData }: Setting
           alignItems: 'center',
           gap: '8px',
         }}>
-          👤 ข้อมูลบัญชี
+          <User size={18} color="#0F172A" /> ข้อมูลบัญชี
         </h3>
         <div style={{
           display: 'flex',
@@ -149,7 +151,7 @@ export default function Settings({ profile, onUpdateGoal, onClearData }: Setting
             background: '#F8FAFC',
             borderRadius: '12px',
           }}>
-            <span style={{ fontSize: '13px', color: '#64748B' }}>📅 เริ่มใช้งาน</span>
+            <span style={{ fontSize: '13px', color: '#64748B', display: 'flex', alignItems: 'center', gap: '6px' }}><Calendar size={14} /> เริ่มใช้งาน</span>
             <span style={{ fontSize: '13px', fontWeight: 600, color: '#1E293B' }}>
               {new Date(profile.createdAt).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' })}
             </span>
@@ -161,7 +163,7 @@ export default function Settings({ profile, onUpdateGoal, onClearData }: Setting
             background: '#F8FAFC',
             borderRadius: '12px',
           }}>
-            <span style={{ fontSize: '13px', color: '#64748B' }}>🎯 เป้าหมายปัจจุบัน</span>
+            <span style={{ fontSize: '13px', color: '#64748B', display: 'flex', alignItems: 'center', gap: '6px' }}><Target size={14} /> เป้าหมายปัจจุบัน</span>
             <span style={{ fontSize: '13px', fontWeight: 600, color: '#2563EB' }}>
               {profile.dailyGoalMl.toLocaleString()} ml/วัน
             </span>
@@ -185,7 +187,7 @@ export default function Settings({ profile, onUpdateGoal, onClearData }: Setting
           alignItems: 'center',
           gap: '8px',
         }}>
-          ⚠️ โซนอันตราย
+          <AlertTriangle size={18} color="#DC2626" /> โซนอันตราย
         </h3>
         <p style={{ fontSize: '13px', color: '#92400E', marginBottom: '16px' }}>
           การลบข้อมูลจะไม่สามารถกู้คืนได้
@@ -205,9 +207,12 @@ export default function Settings({ profile, onUpdateGoal, onClearData }: Setting
               cursor: 'pointer',
               fontFamily: 'Inter, sans-serif',
               transition: 'all 0.2s',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
             }}
           >
-            🗑️ ลบข้อมูลทั้งหมด
+            <Trash2 size={16} /> ลบข้อมูลทั้งหมด
           </button>
         ) : (
           <div style={{
@@ -227,9 +232,12 @@ export default function Settings({ profile, onUpdateGoal, onClearData }: Setting
                 fontSize: '14px',
                 cursor: 'pointer',
                 fontFamily: 'Inter, sans-serif',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
               }}
             >
-              ⚠️ ยืนยันลบ
+              <AlertTriangle size={16} /> ยืนยันลบ
             </button>
             <button
               onClick={() => setShowConfirm(false)}

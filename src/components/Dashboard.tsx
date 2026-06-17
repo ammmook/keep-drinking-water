@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import WaterBottle from './WaterBottle';
 import type { WaterLog, UserProfile } from '../types';
+import { Droplet, Coffee, CupSoda, Plus, Trash2, BarChart2, List, Smile, Frown, Inbox, GlassWater, Target, CircleCheck } from 'lucide-react';
 
 interface DashboardProps {
   profile: UserProfile;
@@ -11,10 +12,10 @@ interface DashboardProps {
   onQuickAdd: (amountMl: number) => void;
 }
 
-const typeIcons: Record<string, string> = {
-  water: '💧',
-  sweet: '🧃',
-  other: '☕',
+const typeIcons: Record<string, React.ReactNode> = {
+  water: <Droplet size={20} color="#0EA5E9" />,
+  sweet: <CupSoda size={20} color="#F59E0B" />,
+  other: <Coffee size={20} color="#8B5CF6" />,
 };
 
 const typeLabels: Record<string, string> = {
@@ -45,9 +46,9 @@ export default function Dashboard({ profile, todayLogs, dailyTotal, onLogWater, 
   }, [goalReached]);
 
   const quickAddButtons = [
-    { ml: 250, icon: '🥤', label: '250ml' },
-    { ml: 500, icon: '🧊', label: '500ml' },
-    { ml: 1000, icon: '🫗', label: '1000ml' },
+    { ml: 250, icon: <GlassWater size={24} color="#64748B" />, label: '250ml' },
+    { ml: 500, icon: <Droplet size={24} color="#64748B" />, label: '500ml' },
+    { ml: 1000, icon: <Droplet size={24} color="#64748B" fill="currentColor" />, label: '1000ml' },
   ];
 
   return (
@@ -65,8 +66,11 @@ export default function Dashboard({ profile, todayLogs, dailyTotal, onLogWater, 
             fontWeight: 800,
             color: '#1E293B',
             margin: 0,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px'
           }}>
-            💧 Dashboard
+            <Droplet size={28} color="#0EA5E9" strokeWidth={2.5} /> Dashboard
           </h1>
           <p style={{ fontSize: '13px', color: '#94A3B8', marginTop: '4px' }}>
             {new Date().toLocaleDateString('th-TH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
@@ -77,7 +81,7 @@ export default function Dashboard({ profile, todayLogs, dailyTotal, onLogWater, 
           onClick={onLogWater}
           style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
         >
-          <span>+</span> Log Water
+          <Plus size={18} /> Log Water
         </button>
       </div>
 
@@ -118,11 +122,13 @@ export default function Dashboard({ profile, todayLogs, dailyTotal, onLogWater, 
               : '1px solid #FCD34D',
           }}>
             <span style={{
-              fontSize: '32px',
-              display: 'block',
-              marginBottom: '4px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '8px',
+              color: goalReached ? '#059669' : '#D97706',
             }} className={showCelebrate ? 'animate-celebrate' : ''}>
-              {goalReached ? '😊' : '😢'}
+              {goalReached ? <Smile size={32} /> : <Frown size={32} />}
             </span>
             <span style={{
               fontSize: '13px',
@@ -178,7 +184,7 @@ export default function Dashboard({ profile, todayLogs, dailyTotal, onLogWater, 
                     (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)';
                   }}
                 >
-                  <span style={{ fontSize: '24px' }}>{btn.icon}</span>
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '24px' }}>{btn.icon}</span>
                   <span style={{ fontSize: '13px', fontWeight: 600, color: '#475569' }}>{btn.label}</span>
                 </button>
               ))}
@@ -196,7 +202,7 @@ export default function Dashboard({ profile, todayLogs, dailyTotal, onLogWater, 
               alignItems: 'center',
               gap: '8px',
             }}>
-              📊 สรุปวันนี้
+              <BarChart2 size={18} color="#0F172A" /> สรุปวันนี้
             </h3>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
               <div style={{
@@ -208,7 +214,7 @@ export default function Dashboard({ profile, todayLogs, dailyTotal, onLogWater, 
                 <div style={{ fontSize: '22px', fontWeight: 800, color: '#2563EB' }}>
                   {todayLogs.length}
                 </div>
-                <div style={{ fontSize: '11px', color: '#64748B', marginTop: '2px' }}>🥤 ครั้ง</div>
+                <div style={{ fontSize: '11px', color: '#64748B', marginTop: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}><GlassWater size={12} /> ครั้ง</div>
               </div>
               <div style={{
                 background: '#EFF6FF',
@@ -219,7 +225,7 @@ export default function Dashboard({ profile, todayLogs, dailyTotal, onLogWater, 
                 <div style={{ fontSize: '22px', fontWeight: 800, color: '#2563EB' }}>
                   {(dailyTotal / 1000).toFixed(1)}L
                 </div>
-                <div style={{ fontSize: '11px', color: '#64748B', marginTop: '2px' }}>💧 รวม</div>
+                <div style={{ fontSize: '11px', color: '#64748B', marginTop: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}><Droplet size={12} /> รวม</div>
               </div>
               <div style={{
                 background: percentage >= 100 ? '#ECFDF5' : '#FEF3C7',
@@ -234,7 +240,7 @@ export default function Dashboard({ profile, todayLogs, dailyTotal, onLogWater, 
                 }}>
                   {percentage}%
                 </div>
-                <div style={{ fontSize: '11px', color: '#64748B', marginTop: '2px' }}>🎯 เป้าหมาย</div>
+                <div style={{ fontSize: '11px', color: '#64748B', marginTop: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}><Target size={12} /> เป้าหมาย</div>
               </div>
               <div style={{
                 background: '#F0F9FF',
@@ -245,7 +251,7 @@ export default function Dashboard({ profile, todayLogs, dailyTotal, onLogWater, 
                 <div style={{ fontSize: '22px', fontWeight: 800, color: '#0EA5E9' }}>
                   {Math.max(0, profile.dailyGoalMl - dailyTotal).toLocaleString()}
                 </div>
-                <div style={{ fontSize: '11px', color: '#64748B', marginTop: '2px' }}>ml เหลือ</div>
+                <div style={{ fontSize: '11px', color: '#64748B', marginTop: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}><CircleCheck size={12} /> ml เหลือ</div>
               </div>
             </div>
           </div>
@@ -263,7 +269,7 @@ export default function Dashboard({ profile, todayLogs, dailyTotal, onLogWater, 
           alignItems: 'center',
           gap: '8px',
         }}>
-          📋 บันทึกวันนี้
+          <List size={18} color="#0F172A" /> บันทึกวันนี้
         </h3>
 
         {todayLogs.length === 0 ? (
@@ -272,7 +278,9 @@ export default function Dashboard({ profile, todayLogs, dailyTotal, onLogWater, 
             padding: '40px 20px',
             color: '#94A3B8',
           }}>
-            <div style={{ fontSize: '48px', marginBottom: '12px' }}>🏜️</div>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px', color: '#CBD5E1' }}>
+              <Inbox size={48} strokeWidth={1.5} />
+            </div>
             <p style={{ fontSize: '14px' }}>ยังไม่มีบันทึก — เริ่มดื่มน้ำกันเลย!</p>
           </div>
         ) : (
@@ -300,7 +308,6 @@ export default function Dashboard({ profile, todayLogs, dailyTotal, onLogWater, 
                 }}
               >
                 <span style={{
-                  fontSize: '28px',
                   width: '40px',
                   height: '40px',
                   display: 'flex',
@@ -365,7 +372,7 @@ export default function Dashboard({ profile, todayLogs, dailyTotal, onLogWater, 
                   }}
                   title="ลบ"
                 >
-                  🗑️
+                  <Trash2 size={16} />
                 </button>
               </div>
             ))}

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Page, UserProfile } from '../types';
+import { Home, Calendar, Settings as SettingsIcon, Droplet, Plus, X, Trash2, CheckCircle, AlertTriangle } from 'lucide-react';
 
 interface SidebarProps {
   activePage: Page;
@@ -10,9 +11,9 @@ interface SidebarProps {
   onClearData: () => void;
 }
 
-const navItems: { page: Page; icon: string; label: string }[] = [
-  { page: 'home', icon: '🏠', label: 'Home' },
-  { page: 'history', icon: '📅', label: 'History' },
+const navItems: { page: Page; icon: React.ReactNode; label: string }[] = [
+  { page: 'home', icon: <Home size={20} />, label: 'Home' },
+  { page: 'history', icon: <Calendar size={20} />, label: 'History' },
 ];
 
 export default function Sidebar({ activePage, onPageChange, onLogWater, profile, onUpdateGoal, onClearData }: SidebarProps) {
@@ -52,12 +53,12 @@ export default function Sidebar({ activePage, onPageChange, onLogWater, profile,
           padding: '0 8px',
           marginBottom: '8px',
         }}>
-          <span style={{ fontSize: '28px' }}>💧</span>
+          <Droplet size={28} color="#0EA5E9" strokeWidth={2.5} />
           <div>
             <div style={{
               fontSize: '20px',
               fontWeight: 800,
-              background: 'linear-gradient(135deg, #2563EB, #0EA5E9)',
+              background: 'linear-gradient(135deg, #0F172A, #3B82F6)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               lineHeight: 1.2,
@@ -83,7 +84,7 @@ export default function Sidebar({ activePage, onPageChange, onLogWater, profile,
             gap: '8px',
           }}
         >
-          <span style={{ fontSize: '18px' }}>+</span> Log Water
+          <Plus size={18} /> Log Water
         </button>
 
         {/* Navigation */}
@@ -98,19 +99,19 @@ export default function Sidebar({ activePage, onPageChange, onLogWater, profile,
                 gap: '12px',
                 padding: '12px 14px',
                 borderRadius: '12px',
-                border: 'none',
                 background: activePage === item.page
-                  ? 'linear-gradient(135deg, #2563EB, #3B82F6)'
+                  ? '#F8FAFC'
                   : 'transparent',
-                color: activePage === item.page ? 'white' : '#64748B',
+                color: activePage === item.page ? '#0F172A' : '#64748B',
                 cursor: 'pointer',
                 fontSize: '14px',
                 fontWeight: activePage === item.page ? 600 : 500,
                 transition: 'all 0.2s ease',
                 fontFamily: 'Inter, sans-serif',
                 textAlign: 'left',
+                border: activePage === item.page ? '1px solid #E2E8F0' : '1px solid transparent',
                 boxShadow: activePage === item.page
-                  ? '0 4px 12px rgba(37, 99, 235, 0.3)'
+                  ? '0 2px 8px rgba(15, 23, 42, 0.04)'
                   : 'none',
               }}
               onMouseEnter={(e) => {
@@ -124,7 +125,7 @@ export default function Sidebar({ activePage, onPageChange, onLogWater, profile,
                 }
               }}
             >
-              <span style={{ fontSize: '20px' }}>{item.icon}</span>
+              <span style={{ display: 'flex', alignItems: 'center' }}>{item.icon}</span>
               <span>{item.label}</span>
             </button>
           ))}
@@ -158,7 +159,7 @@ export default function Sidebar({ activePage, onPageChange, onLogWater, profile,
             (e.currentTarget as HTMLButtonElement).style.color = '#94A3B8';
           }}
         >
-          <span style={{ fontSize: '20px' }}>⚙️</span>
+          <SettingsIcon size={20} />
           <span>Settings</span>
         </button>
       </aside>
@@ -199,15 +200,17 @@ export default function Sidebar({ activePage, onPageChange, onLogWater, profile,
             }}
           >
             <span style={{
-              fontSize: '22px',
+              display: 'flex',
+              alignItems: 'center',
               opacity: activePage === item.page ? 1 : 0.5,
               transform: activePage === item.page ? 'scale(1.1)' : 'scale(1)',
               transition: 'all 0.2s',
+              color: activePage === item.page ? '#0F172A' : '#94A3B8',
             }}>{item.icon}</span>
             <span style={{
               fontSize: '10px',
               fontWeight: activePage === item.page ? 700 : 500,
-              color: activePage === item.page ? '#2563EB' : '#94A3B8',
+              color: activePage === item.page ? '#0F172A' : '#94A3B8',
             }}>{item.label}</span>
           </button>
         ))}
@@ -226,7 +229,7 @@ export default function Sidebar({ activePage, onPageChange, onLogWater, profile,
             borderRadius: '10px',
           }}
         >
-          <span style={{ fontSize: '22px', opacity: 0.5 }}>⚙️</span>
+          <SettingsIcon size={22} color="#94A3B8" style={{ opacity: 0.5 }} />
           <span style={{ fontSize: '10px', fontWeight: 500, color: '#94A3B8' }}>Settings</span>
         </button>
         {/* Floating Log Button on mobile */}
@@ -240,18 +243,17 @@ export default function Sidebar({ activePage, onPageChange, onLogWater, profile,
             width: '56px',
             height: '56px',
             borderRadius: '50%',
-            background: 'linear-gradient(135deg, #2563EB, #3B82F6)',
+            background: '#0F172A',
             border: '4px solid white',
             color: 'white',
-            fontSize: '24px',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 4px 16px rgba(37, 99, 235, 0.4)',
+            boxShadow: '0 4px 16px rgba(15, 23, 42, 0.2)',
           }}
         >
-          +
+          <Plus size={24} />
         </button>
       </nav>
 
@@ -265,21 +267,21 @@ export default function Sidebar({ activePage, onPageChange, onLogWater, profile,
             <div style={{
               display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px',
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{ fontSize: '24px' }}>⚙️</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#0F172A' }}>
+                <SettingsIcon size={24} />
                 <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#1E293B', margin: 0 }}>ตั้งค่า</h2>
               </div>
               <button onClick={() => setShowSettings(false)} style={{
                 width: '36px', height: '36px', borderRadius: '10px', border: 'none',
-                background: '#F1F5F9', color: '#64748B', fontSize: '18px', cursor: 'pointer',
+                background: '#F1F5F9', color: '#64748B', cursor: 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>✕</button>
+              }}><X size={18} /></button>
             </div>
 
             {/* Goal adjustment */}
             <div style={{ marginBottom: '24px' }}>
-              <label style={{ fontSize: '12px', fontWeight: 600, color: '#64748B', marginBottom: '10px', display: 'block', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                🎯 เป้าหมายประจำวัน
+              <label style={{ fontSize: '12px', fontWeight: 600, color: '#64748B', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                <Droplet size={14} /> เป้าหมายประจำวัน
               </label>
               <div style={{
                 display: 'flex', alignItems: 'center', gap: '12px', padding: '4px',
@@ -293,8 +295,7 @@ export default function Sidebar({ activePage, onPageChange, onLogWater, profile,
                 <div style={{ flex: 1, textAlign: 'center' }}>
                   <span style={{
                     fontSize: '28px', fontWeight: 800,
-                    background: 'linear-gradient(135deg, #2563EB, #3B82F6)',
-                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                    color: '#0F172A',
                   }}>{goalMl.toLocaleString()}</span>
                   <span style={{ fontSize: '14px', color: '#94A3B8', marginLeft: '4px', fontWeight: 500 }}>ml</span>
                 </div>
@@ -315,8 +316,9 @@ export default function Sidebar({ activePage, onPageChange, onLogWater, profile,
                 width: '100%', padding: '14px', borderRadius: '14px', marginBottom: '16px',
                 opacity: goalMl === profile.dailyGoalMl ? 0.5 : 1,
                 cursor: goalMl === profile.dailyGoalMl ? 'not-allowed' : 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
               }}>
-              {saved ? '✅ บันทึกแล้ว!' : '💾 บันทึกเป้าหมาย'}
+              {saved ? <><CheckCircle size={18} /> บันทึกแล้ว!</> : 'บันทึกเป้าหมาย'}
             </button>
 
             {/* Danger zone */}
@@ -324,22 +326,22 @@ export default function Sidebar({ activePage, onPageChange, onLogWater, profile,
               padding: '16px', borderRadius: '14px', border: '1px solid #FECACA',
               background: 'rgba(254, 242, 242, 0.5)', marginTop: '8px',
             }}>
-              <p style={{ fontSize: '12px', color: '#92400E', marginBottom: '12px' }}>
-                ⚠️ การลบข้อมูลจะไม่สามารถกู้คืนได้
+              <p style={{ fontSize: '12px', color: '#92400E', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <AlertTriangle size={14} /> การลบข้อมูลจะไม่สามารถกู้คืนได้
               </p>
               {!showConfirmClear ? (
                 <button onClick={() => setShowConfirmClear(true)} style={{
                   padding: '10px 20px', borderRadius: '10px', border: '1px solid #FECACA',
                   background: 'white', color: '#DC2626', fontWeight: 600, fontSize: '13px',
-                  cursor: 'pointer', fontFamily: 'Inter, sans-serif',
-                }}>🗑️ ลบข้อมูลทั้งหมด</button>
+                  cursor: 'pointer', fontFamily: 'Inter, sans-serif', display: 'flex', alignItems: 'center', gap: '6px'
+                }}><Trash2 size={16} /> ลบข้อมูลทั้งหมด</button>
               ) : (
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <button onClick={() => { onClearData(); setShowConfirmClear(false); setShowSettings(false); }} style={{
                     padding: '10px 20px', borderRadius: '10px', border: 'none',
                     background: '#DC2626', color: 'white', fontWeight: 600, fontSize: '13px',
-                    cursor: 'pointer', fontFamily: 'Inter, sans-serif',
-                  }}>⚠️ ยืนยันลบ</button>
+                    cursor: 'pointer', fontFamily: 'Inter, sans-serif', display: 'flex', alignItems: 'center', gap: '6px'
+                  }}><AlertTriangle size={16} /> ยืนยันลบ</button>
                   <button onClick={() => setShowConfirmClear(false)} className="btn-secondary" style={{ padding: '10px 16px' }}>
                     ยกเลิก
                   </button>

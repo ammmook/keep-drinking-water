@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import type { UserProfile, WaterLog } from '../types';
+import { TrendingUp, Droplet, BarChart2, Target, Flame, Sunrise, Sun, Moon, CupSoda, Coffee, Clock } from 'lucide-react';
 
 interface StatisticsProps {
   profile: UserProfile;
@@ -7,7 +8,6 @@ interface StatisticsProps {
   getStreak: () => number;
   getTotalDaysTracked: () => number;
   getGoalCompletionRate: () => number;
-  getDailyTotalsForMonth: (year: number, month: number) => { date: string; total: number }[];
 }
 
 const dayLabels = ['จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส', 'อา'];
@@ -18,7 +18,6 @@ export default function Statistics({
   getStreak,
   getTotalDaysTracked,
   getGoalCompletionRate,
-  getDailyTotalsForMonth,
 }: StatisticsProps) {
   const totalVolume = useMemo(() => logs.reduce((sum, l) => sum + l.amountMl, 0), [logs]);
   const totalDays = getTotalDaysTracked();
@@ -58,9 +57,9 @@ export default function Statistics({
       else buckets.evening += l.amountMl;
     });
     return [
-      { label: 'เช้า', icon: '🌅', value: buckets.morning, pct: total > 0 ? Math.round((buckets.morning / total) * 100) : 0 },
-      { label: 'บ่าย', icon: '☀️', value: buckets.afternoon, pct: total > 0 ? Math.round((buckets.afternoon / total) * 100) : 0 },
-      { label: 'เย็น', icon: '🌙', value: buckets.evening, pct: total > 0 ? Math.round((buckets.evening / total) * 100) : 0 },
+      { label: 'เช้า', icon: <Sunrise size={18} color="#0EA5E9" />, value: buckets.morning, pct: total > 0 ? Math.round((buckets.morning / total) * 100) : 0 },
+      { label: 'บ่าย', icon: <Sun size={18} color="#F59E0B" />, value: buckets.afternoon, pct: total > 0 ? Math.round((buckets.afternoon / total) * 100) : 0 },
+      { label: 'เย็น', icon: <Moon size={18} color="#8B5CF6" />, value: buckets.evening, pct: total > 0 ? Math.round((buckets.evening / total) * 100) : 0 },
     ];
   }, [logs]);
 
@@ -70,13 +69,13 @@ export default function Statistics({
     logs.forEach(l => { types[l.type] += l.amountMl; });
     const total = types.water + types.sweet + types.other;
     return [
-      { label: 'น้ำเปล่า', icon: '💧', value: types.water, pct: total > 0 ? Math.round((types.water / total) * 100) : 0, color: '#3B82F6' },
-      { label: 'น้ำหวาน', icon: '🧃', value: types.sweet, pct: total > 0 ? Math.round((types.sweet / total) * 100) : 0, color: '#F59E0B' },
-      { label: 'อื่นๆ', icon: '☕', value: types.other, pct: total > 0 ? Math.round((types.other / total) * 100) : 0, color: '#8B5CF6' },
+      { label: 'น้ำเปล่า', icon: <Droplet size={18} color="#3B82F6" />, value: types.water, pct: total > 0 ? Math.round((types.water / total) * 100) : 0, color: '#3B82F6' },
+      { label: 'น้ำหวาน', icon: <CupSoda size={18} color="#F59E0B" />, value: types.sweet, pct: total > 0 ? Math.round((types.sweet / total) * 100) : 0, color: '#F59E0B' },
+      { label: 'อื่นๆ', icon: <Coffee size={18} color="#8B5CF6" />, value: types.other, pct: total > 0 ? Math.round((types.other / total) * 100) : 0, color: '#8B5CF6' },
     ];
   }, [logs]);
 
-  const statCard = (icon: string, value: string, label: string, color: string) => (
+  const statCard = (icon: React.ReactNode, value: string, label: string, color: string) => (
     <div className="glass-card" style={{
       padding: '20px',
       display: 'flex',
@@ -105,8 +104,8 @@ export default function Statistics({
     <div className="animate-fadeIn" style={{ padding: '28px', maxWidth: '900px', margin: '0 auto' }}>
       {/* Header */}
       <div style={{ marginBottom: '24px' }}>
-        <h1 style={{ fontSize: '26px', fontWeight: 800, color: '#1E293B', margin: 0 }}>
-          📈 สถิติ
+        <h1 style={{ fontSize: '26px', fontWeight: 800, color: '#1E293B', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <TrendingUp size={28} color="#0F172A" /> สถิติ
         </h1>
         <p style={{ fontSize: '13px', color: '#94A3B8', marginTop: '4px' }}>
           ติดตามพัฒนาการการดื่มน้ำของคุณ
@@ -115,17 +114,17 @@ export default function Statistics({
 
       {/* Stats Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px', marginBottom: '24px' }} className="stats-grid">
-        {statCard('💧', `${(totalVolume / 1000).toFixed(1)}L`, 'รวมทั้งหมด', '#EFF6FF')}
-        {statCard('📊', `${(dailyAverage / 1000).toFixed(1)}L`, 'เฉลี่ยต่อวัน', '#F0F9FF')}
-        {statCard('🎯', `${completionRate}%`, 'ถึงเป้าหมาย', '#ECFDF5')}
-        {statCard('🔥', `${streak}`, 'วันติดต่อกัน', '#FEF3C7')}
+        {statCard(<Droplet size={24} color="#2563EB" />, `${(totalVolume / 1000).toFixed(1)}L`, 'รวมทั้งหมด', '#EFF6FF')}
+        {statCard(<BarChart2 size={24} color="#0EA5E9" />, `${(dailyAverage / 1000).toFixed(1)}L`, 'เฉลี่ยต่อวัน', '#F0F9FF')}
+        {statCard(<Target size={24} color="#059669" />, `${completionRate}%`, 'ถึงเป้าหมาย', '#ECFDF5')}
+        {statCard(<Flame size={24} color="#D97706" />, `${streak}`, 'วันติดต่อกัน', '#FEF3C7')}
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '20px' }} className="stats-detail-grid">
         {/* Weekly Chart */}
         <div className="glass-card" style={{ padding: '24px' }}>
-          <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#1E293B', marginBottom: '20px' }}>
-            📊 สัปดาห์นี้
+          <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#1E293B', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <BarChart2 size={18} color="#0F172A" /> สัปดาห์นี้
           </h3>
           <div style={{
             display: 'flex',
@@ -185,7 +184,7 @@ export default function Statistics({
             color: '#94A3B8',
             justifyContent: 'center',
           }}>
-            🎯 เป้าหมาย: {profile.dailyGoalMl.toLocaleString()} ml/วัน
+            <Target size={14} /> เป้าหมาย: {profile.dailyGoalMl.toLocaleString()} ml/วัน
           </div>
         </div>
 
@@ -193,13 +192,13 @@ export default function Statistics({
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           {/* Peak Times */}
           <div className="glass-card" style={{ padding: '24px' }}>
-            <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#1E293B', marginBottom: '16px' }}>
-              ⏰ ช่วงเวลาดื่ม
+            <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#1E293B', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Clock size={18} color="#0F172A" /> ช่วงเวลาดื่ม
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {peakTimes.map((t) => (
                 <div key={t.label} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <span style={{ fontSize: '18px', width: '28px' }}>{t.icon}</span>
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '28px' }}>{t.icon}</span>
                   <span style={{ fontSize: '13px', color: '#475569', width: '36px', fontWeight: 500 }}>{t.label}</span>
                   <div style={{ flex: 1, height: '8px', background: '#E2E8F0', borderRadius: '4px', overflow: 'hidden' }}>
                     <div style={{
@@ -218,13 +217,13 @@ export default function Statistics({
 
           {/* Type breakdown */}
           <div className="glass-card" style={{ padding: '24px' }}>
-            <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#1E293B', marginBottom: '16px' }}>
-              🥤 ประเภทเครื่องดื่ม
+            <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#1E293B', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <CupSoda size={18} color="#0F172A" /> ประเภทเครื่องดื่ม
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {typeBreakdown.map((t) => (
                 <div key={t.label} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <span style={{ fontSize: '18px', width: '28px' }}>{t.icon}</span>
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '28px' }}>{t.icon}</span>
                   <span style={{ fontSize: '13px', color: '#475569', width: '50px', fontWeight: 500 }}>{t.label}</span>
                   <div style={{ flex: 1, height: '8px', background: '#E2E8F0', borderRadius: '4px', overflow: 'hidden' }}>
                     <div style={{
