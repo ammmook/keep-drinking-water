@@ -1,8 +1,14 @@
 import { useState, useCallback, useEffect } from 'react';
-import type { UserProfile, WaterLog } from '../types';
+import type { UserProfile, WaterLog, QuickPreset } from '../types';
 
 const PROFILE_KEY = 'aquaflow_profile';
 const LOGS_KEY = 'aquaflow_logs';
+const PRESETS_KEY = 'aquaflow_presets';
+
+const DEFAULT_PRESETS: QuickPreset[] = [
+  { id: 'default-1', label: 'Water Bottle', amountMl: 600, unit: 'ml', container: 'bottle', type: 'water', icon: 'bottle' },
+  { id: 'default-2', label: 'Water Glass', amountMl: 250, unit: 'ml', container: 'glass', type: 'water', icon: 'glass' },
+];
 
 function generateId(): string {
   return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
@@ -34,14 +40,33 @@ function saveAllLogs(logs: WaterLog[]): void {
   localStorage.setItem(LOGS_KEY, JSON.stringify(logs));
 }
 
+function loadPresets(): QuickPreset[] {
+  try {
+    const data = localStorage.getItem(PRESETS_KEY);
+    return data ? JSON.parse(data) : DEFAULT_PRESETS;
+  } catch {
+    return DEFAULT_PRESETS;
+  }
+}
+
+function savePresets(presets: QuickPreset[]): void {
+  localStorage.setItem(PRESETS_KEY, JSON.stringify(presets));
+}
+
 export function useWaterData() {
   const [profile, setProfileState] = useState<UserProfile | null>(loadProfile);
   const [logs, setLogs] = useState<WaterLog[]>(loadAllLogs);
+  const [presets, setPresets] = useState<QuickPreset[]>(loadPresets);
 
   // Sync logs to localStorage whenever they change
   useEffect(() => {
     saveAllLogs(logs);
   }, [logs]);
+
+  // Sync presets to localStorage whenever they change
+  useEffect(() => {
+    savePresets(presets);
+  }, [presets]);
 
   const setProfile = useCallback((p: UserProfile) => {
     saveProfile(p);
@@ -56,6 +81,20 @@ export function useWaterData() {
 
   const deleteLog = useCallback((id: string) => {
     setLogs(prev => prev.filter(l => l.id !== id));
+  }, []);
+
+  const addPreset = useCallback((preset: Omit<QuickPreset, 'id'>) => {
+    const newPreset: QuickPreset = { ...preset, id: generateId() };
+    setPresets(prev => [...prev, newPreset]);
+    return newPreset;
+  }, []);
+
+  const editPreset = useCallback((id: string, updates: Partial<Omit<QuickPreset, 'id'>>) => {
+    setPresets(prev => prev.map(p => p.id === id ? { ...p, ...updates } : p));
+  }, []);
+
+  const deletePreset = useCallback((id: string) => {
+    setPresets(prev => prev.filter(p => p.id !== id));
   }, []);
 
   const getLogsByDate = useCallback((date: string): WaterLog[] => {
@@ -173,8 +212,10 @@ export function useWaterData() {
   const clearAllData = useCallback(() => {
     localStorage.removeItem(PROFILE_KEY);
     localStorage.removeItem(LOGS_KEY);
+    localStorage.removeItem(PRESETS_KEY);
     setProfileState(null);
     setLogs([]);
+    setPresets(DEFAULT_PRESETS);
   }, []);
 
   return {
@@ -196,5 +237,9 @@ export function useWaterData() {
     getTotalDaysTracked,
     getGoalCompletionRate,
     clearAllData,
+    presets,
+    addPreset,
+    editPreset,
+    deletePreset,
   };
 }

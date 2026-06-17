@@ -25,7 +25,7 @@ export default function WaterBottle({ percentage, currentMl, goalMl, size = 'lar
   };
 
   const cfg = sizeConfig[size];
-  const waterHeight = (animatedLevel / 100) * 65; // percentage of bottle body
+  const waterHeight = (animatedLevel / 100) * 150; // percentage of bottle body height (150)
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
@@ -74,9 +74,9 @@ export default function WaterBottle({ percentage, currentMl, goalMl, size = 'lar
           {/* Water body */}
           <rect
             x="25"
-            y={200 - waterHeight * 1.5}
+            y={200 - waterHeight}
             width="70"
-            height={waterHeight * 1.5 + 10}
+            height={waterHeight + 10}
             fill={`url(#waterGrad-${size})`}
             style={{
               transition: 'y 1s ease-out, height 1s ease-out',
@@ -85,7 +85,7 @@ export default function WaterBottle({ percentage, currentMl, goalMl, size = 'lar
           {/* Wave 1 */}
           <ellipse
             cx="60"
-            cy={200 - waterHeight * 1.5}
+            cy={200 - waterHeight}
             rx="38"
             ry="4"
             fill="#BAE6FD"
@@ -98,7 +98,7 @@ export default function WaterBottle({ percentage, currentMl, goalMl, size = 'lar
           {/* Wave 2 */}
           <ellipse
             cx="60"
-            cy={200 - waterHeight * 1.5 + 3}
+            cy={200 - waterHeight + 3}
             rx="36"
             ry="3"
             fill="#3B82F6"

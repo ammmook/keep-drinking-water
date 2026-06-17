@@ -3,7 +3,7 @@
 /* ===== AquaFlow Design System ===== */
 
 @theme {
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Google Sans', 'Outfit', system-ui, -apple-system, sans-serif;
 
   --color-blue-50: #EFF6FF;
   --color-blue-100: #DBEAFE;
@@ -45,7 +45,7 @@
 }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Google Sans', 'Outfit', system-ui, -apple-system, sans-serif;
   background: #F8FAFC;
   min-height: 100vh;
   color: #0F172A;
@@ -233,7 +233,7 @@ body {
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Google Sans', 'Outfit', sans-serif;
   letter-spacing: 0.3px;
 }
 
@@ -257,7 +257,7 @@ body {
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Google Sans', 'Outfit', sans-serif;
 }
 
 .btn-secondary:hover {

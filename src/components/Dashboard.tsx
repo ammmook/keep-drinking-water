@@ -1,26 +1,40 @@
 import { useState, useEffect } from 'react';
 import WaterBottle from './WaterBottle';
-import type { WaterLog, UserProfile } from '../types';
-import { Droplet, Coffee, CupSoda, Plus, Trash2, BarChart2, List, Smile, Frown, Inbox, GlassWater, Target, CircleCheck } from 'lucide-react';
+import type { WaterLog, UserProfile, QuickPreset } from '../types';
+import { Droplet, Coffee, CupSoda, Plus, Trash2, BarChart2, List, Smile, Frown, Inbox, GlassWater, Target, CircleCheck, Container, Package } from 'lucide-react';
 
 interface DashboardProps {
   profile: UserProfile;
   todayLogs: WaterLog[];
   dailyTotal: number;
+  presets: QuickPreset[];
   onLogWater: () => void;
   onDeleteLog: (id: string) => void;
-  onQuickAdd: (amountMl: number) => void;
+  onQuickAdd: (preset: QuickPreset) => void;
 }
 
-const typeIcons: Record<string, React.ReactNode> = {
-  water: <Droplet size={20} color="#0EA5E9" />,
-  sweet: <CupSoda size={20} color="#F59E0B" />,
-  other: <Coffee size={20} color="#8B5CF6" />,
-};
+export function getLogIcon(type: string, container: string, size = 20): React.ReactNode {
+  if (type === 'coffee') return <Coffee size={size} color="#8B5CF6" />;
+  if (type === 'tea') return <Coffee size={size} color="#10B981" />;
+  if (type === 'sweet') return <CupSoda size={size} color="#F59E0B" />;
+  
+  if (container === 'glass') return <GlassWater size={size} color="#0EA5E9" />;
+  if (container === 'bottle') return <Container size={size} color="#0EA5E9" />;
+  if (container === 'none') return <Package size={size} color="#64748B" />;
+  return <Droplet size={size} color="#0EA5E9" />;
+}
 
-const typeLabels: Record<string, string> = {
+export function getPresetIcon(iconName: string, size = 24): React.ReactNode {
+  if (iconName === 'glass') return <GlassWater size={size} color="#64748B" />;
+  if (iconName === 'bottle') return <Container size={size} color="#64748B" />;
+  return <Droplet size={size} color="#64748B" />;
+}
+
+export const typeLabels: Record<string, string> = {
   water: 'น้ำเปล่า',
   sweet: 'น้ำหวาน',
+  coffee: 'กาแฟ',
+  tea: 'ชา',
   other: 'อื่นๆ',
 };
 
@@ -32,7 +46,7 @@ function formatTime(time: string): string {
   return `${String(displayHour).padStart(2, '0')}:${m} ${period}`;
 }
 
-export default function Dashboard({ profile, todayLogs, dailyTotal, onLogWater, onDeleteLog, onQuickAdd }: DashboardProps) {
+export default function Dashboard({ profile, todayLogs, dailyTotal, presets, onLogWater, onDeleteLog, onQuickAdd }: DashboardProps) {
   const percentage = Math.round((dailyTotal / profile.dailyGoalMl) * 100);
   const goalReached = dailyTotal >= profile.dailyGoalMl;
   const [showCelebrate, setShowCelebrate] = useState(false);
@@ -44,12 +58,6 @@ export default function Dashboard({ profile, todayLogs, dailyTotal, onLogWater, 
       return () => clearTimeout(timer);
     }
   }, [goalReached]);
-
-  const quickAddButtons = [
-    { ml: 250, icon: <GlassWater size={24} color="#64748B" />, label: '250ml' },
-    { ml: 500, icon: <Droplet size={24} color="#64748B" />, label: '500ml' },
-    { ml: 1000, icon: <Droplet size={24} color="#64748B" fill="currentColor" />, label: '1000ml' },
-  ];
 
   return (
     <div className="animate-fadeIn" style={{ padding: '28px', maxWidth: '900px', margin: '0 auto' }}>
@@ -155,23 +163,23 @@ export default function Dashboard({ profile, todayLogs, dailyTotal, onLogWater, 
             }}>
               ⚡ เพิ่มเร็ว
             </h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
-              {quickAddButtons.map((btn) => (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))', gap: '10px' }}>
+              {presets.map((preset) => (
                 <button
-                  key={btn.ml}
-                  onClick={() => onQuickAdd(btn.ml)}
+                  key={preset.id}
+                  onClick={() => onQuickAdd(preset)}
                   style={{
                     padding: '16px 8px',
                     borderRadius: '14px',
                     border: '2px solid #E2E8F0',
                     background: 'white',
                     cursor: 'pointer',
-                    transition: 'all 0.2s',
                     display: 'flex',
                     flexDirection: 'column',
-                    alignItems: 'center',
+                    justifyContent: 'center',
                     gap: '6px',
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: `'Google Sans', 'Outfit', sans-serif`,
+                    transition: 'all 0.2s ease',
                   }}
                   onMouseEnter={(e) => {
                     (e.currentTarget as HTMLButtonElement).style.borderColor = '#3B82F6';
@@ -184,8 +192,11 @@ export default function Dashboard({ profile, todayLogs, dailyTotal, onLogWater, 
                     (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)';
                   }}
                 >
-                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '24px' }}>{btn.icon}</span>
-                  <span style={{ fontSize: '13px', fontWeight: 600, color: '#475569' }}>{btn.label}</span>
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '24px' }}>
+                    {getPresetIcon(preset.icon)}
+                  </span>
+                  <span style={{ fontSize: '12px', fontWeight: 600, color: '#475569' }}>{preset.amountMl}ml</span>
+                  <span style={{ fontSize: '10px', color: '#64748B' }}>{preset.label}</span>
                 </button>
               ))}
             </div>
@@ -318,11 +329,11 @@ export default function Dashboard({ profile, todayLogs, dailyTotal, onLogWater, 
                   boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
                   flexShrink: 0,
                 }}>
-                  {typeIcons[log.type]}
+                  {getLogIcon(log.type, log.container)}
                 </span>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: '14px', fontWeight: 600, color: '#1E293B' }}>
-                    {log.amountMl}ml {typeLabels[log.type]}
+                    {log.amountMl}ml {typeLabels[log.type] || 'อื่นๆ'}
                   </div>
                   {log.note && (
                     <div style={{

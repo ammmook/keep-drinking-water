@@ -1,6 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useId } from 'react';
 import type { ViewMode, WaterLog, UserProfile } from '../types';
-import { Droplet, Coffee, CupSoda, Calendar as CalendarIcon, BarChart2, TrendingUp, Trash2, Smile, Frown, Moon, ChevronLeft, ChevronRight, Target } from 'lucide-react';
+import { Droplet, Calendar as CalendarIcon, BarChart2, TrendingUp, Trash2, Smile, Frown, Moon, ChevronLeft, ChevronRight, Target } from 'lucide-react';
+import { getLogIcon, typeLabels } from './Dashboard';
 
 interface HistoryProps {
   profile: UserProfile;
@@ -11,7 +12,7 @@ interface HistoryProps {
   onDeleteLog: (id: string) => void;
 }
 
-const typeIcons: Record<string, React.ReactNode> = { water: <Droplet size={18} color="#0EA5E9" />, sweet: <CupSoda size={18} color="#F59E0B" />, other: <Coffee size={18} color="#8B5CF6" /> };
+
 const monthNamesFull = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
 const monthNamesShort = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
 const dayNames = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
@@ -31,6 +32,7 @@ function MiniBottle({ percentage, label, subLabel, size = 'medium', onClick, isS
   isSelected?: boolean;
   goalReached?: boolean;
 }) {
+  const uid = useId();
   const clampedPct = Math.min(Math.max(percentage, 0), 100);
   const sizeConfig = {
     small: { w: 36, h: 56, fontSize: '9px', subFontSize: '7px', labelGap: '3px' },
@@ -38,7 +40,7 @@ function MiniBottle({ percentage, label, subLabel, size = 'medium', onClick, isS
     large: { w: 72, h: 110, fontSize: '14px', subFontSize: '11px', labelGap: '6px' },
   };
   const cfg = sizeConfig[size];
-  const waterH = (clampedPct / 100) * 55;
+  const waterH = (clampedPct / 100) * 48; // Max height is 48
 
   const waterColor = goalReached
     ? { top: '#4ADE80', mid: '#22C55E', bot: '#16A34A' }
@@ -62,11 +64,11 @@ function MiniBottle({ percentage, label, subLabel, size = 'medium', onClick, isS
     >
       <svg viewBox="0 0 40 70" width={cfg.w} height={cfg.h}>
         <defs>
-          <linearGradient id={`wg-${label}-${clampedPct}`} x1="0%" y1="0%" x2="0%" y2="100%">
+          <linearGradient id={`wg-${uid}`} x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor={waterColor.top} />
             <stop offset="100%" stopColor={waterColor.bot} />
           </linearGradient>
-          <clipPath id={`bc-${label}-${clampedPct}`}>
+          <clipPath id={`bc-${uid}`}>
             <rect x="6" y="16" width="28" height="48" rx="6" />
           </clipPath>
         </defs>
@@ -76,8 +78,8 @@ function MiniBottle({ percentage, label, subLabel, size = 'medium', onClick, isS
         {/* Bottle body */}
         <rect x="6" y="16" width="28" height="48" rx="6" fill="#F1F5F9" stroke={isSelected ? '#2563EB' : '#E2E8F0'} strokeWidth={isSelected ? '1.5' : '0.8'} />
         {/* Water */}
-        <g clipPath={`url(#bc-${label}-${clampedPct})`}>
-          <rect x="6" y={64 - waterH} width="28" height={waterH + 2} fill={`url(#wg-${label}-${clampedPct})`}>
+        <g clipPath={`url(#bc-${uid})`}>
+          <rect x="6" y={64 - waterH} width="28" height={waterH + 2} fill={`url(#wg-${uid})`}>
             <animate attributeName="y" from={66} to={64 - waterH} dur="0.8s" fill="freeze" />
             <animate attributeName="height" from={0} to={waterH + 2} dur="0.8s" fill="freeze" />
           </rect>
@@ -164,7 +166,7 @@ export default function History({
     fontSize: '13px',
     cursor: 'pointer',
     transition: 'all 0.2s',
-    fontFamily: 'Inter, sans-serif',
+    fontFamily: `'Google Sans', 'Outfit', sans-serif`,
     boxShadow: active ? '0 2px 8px rgba(37, 99, 235, 0.3)' : 'none',
   });
 
@@ -215,7 +217,7 @@ export default function History({
         marginBottom: '24px',
       }}>
         {(['day', 'month', 'year'] as ViewMode[]).map((mode) => (
-          <button key={mode} onClick={() => setViewMode(mode)} style={{...tabStyle(viewMode === mode), display: 'flex', alignItems: 'center', gap: '6px'}}>
+          <button key={mode} onClick={() => setViewMode(mode)} style={{ ...tabStyle(viewMode === mode), display: 'flex', alignItems: 'center', gap: '6px' }}>
             {mode === 'day' ? <><CalendarIcon size={16} /> รายวัน</> : mode === 'month' ? <><BarChart2 size={16} /> รายเดือน</> : <><TrendingUp size={16} /> รายปี</>}
           </button>
         ))}
@@ -338,8 +340,8 @@ export default function History({
                     display: 'flex', alignItems: 'center', gap: '10px',
                     padding: '10px 12px', background: '#F8FAFC', borderRadius: '10px', fontSize: '13px',
                   }}>
-                    <span style={{ fontSize: '18px' }}>{typeIcons[log.type]}</span>
-                    <span style={{ fontWeight: 600, color: '#1E293B', flex: 1 }}>{log.amountMl}ml</span>
+                    <span style={{ fontSize: '18px', display: 'flex' }}>{getLogIcon(log.type, log.container, 18)}</span>
+                    <span style={{ fontWeight: 600, color: '#1E293B', flex: 1 }}>{log.amountMl}ml {typeLabels[log.type] || 'อื่นๆ'}</span>
                     {log.note && <span style={{ color: '#94A3B8', fontSize: '11px', maxWidth: '80px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{log.note}</span>}
                     <span style={{ color: '#94A3B8', fontSize: '11px', flexShrink: 0 }}>{log.time}</span>
                     <button onClick={() => onDeleteLog(log.id)} style={{

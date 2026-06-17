@@ -65,13 +65,15 @@ export default function Statistics({
 
   // Type breakdown
   const typeBreakdown = useMemo(() => {
-    const types = { water: 0, sweet: 0, other: 0 };
-    logs.forEach(l => { types[l.type] += l.amountMl; });
-    const total = types.water + types.sweet + types.other;
+    const types: Record<string, number> = { water: 0, sweet: 0, coffee: 0, tea: 0, other: 0 };
+    logs.forEach(l => { types[l.type] = (types[l.type] || 0) + l.amountMl; });
+    const total = Object.values(types).reduce((a, b) => a + b, 0);
     return [
       { label: 'น้ำเปล่า', icon: <Droplet size={18} color="#3B82F6" />, value: types.water, pct: total > 0 ? Math.round((types.water / total) * 100) : 0, color: '#3B82F6' },
       { label: 'น้ำหวาน', icon: <CupSoda size={18} color="#F59E0B" />, value: types.sweet, pct: total > 0 ? Math.round((types.sweet / total) * 100) : 0, color: '#F59E0B' },
-      { label: 'อื่นๆ', icon: <Coffee size={18} color="#8B5CF6" />, value: types.other, pct: total > 0 ? Math.round((types.other / total) * 100) : 0, color: '#8B5CF6' },
+      { label: 'กาแฟ', icon: <Coffee size={18} color="#8B5CF6" />, value: types.coffee, pct: total > 0 ? Math.round((types.coffee / total) * 100) : 0, color: '#8B5CF6' },
+      { label: 'ชา', icon: <Coffee size={18} color="#10B981" />, value: types.tea, pct: total > 0 ? Math.round((types.tea / total) * 100) : 0, color: '#10B981' },
+      { label: 'อื่นๆ', icon: <Droplet size={18} color="#64748B" />, value: types.other, pct: total > 0 ? Math.round((types.other / total) * 100) : 0, color: '#64748B' },
     ];
   }, [logs]);
 

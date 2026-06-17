@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Droplet, Coffee, CupSoda, GlassWater, Calendar, Clock, Ruler, X, FileText, Container, CheckCircle } from 'lucide-react';
+import { Droplet, Coffee, CupSoda, GlassWater, Calendar, Clock, Ruler, X, FileText, Container, CheckCircle, Package } from 'lucide-react';
 
 interface LogWaterModalProps {
   isOpen: boolean;
@@ -8,28 +8,30 @@ interface LogWaterModalProps {
     date: string;
     time: string;
     amountMl: number;
-    unit: 'ml' | 'glass' | 'bottle';
-    type: 'water' | 'sweet' | 'other';
+    unit: 'ml' | 'l';
+    container: 'glass' | 'bottle' | 'none';
+    type: 'water' | 'sweet' | 'coffee' | 'tea' | 'other';
     note?: string;
   }) => void;
 }
 
-const volumePresets = [
-  { label: '250ml', value: 250, icon: <GlassWater size={20} /> },
-  { label: '500ml', value: 500, icon: <Droplet size={20} /> },
-  { label: '1000ml', value: 1000, icon: <Droplet size={20} fill="currentColor" /> },
+const unitOptions: { value: 'ml' | 'l'; label: string }[] = [
+  { value: 'ml', label: 'มิลลิลิตร (ml)' },
+  { value: 'l', label: 'ลิตร (L)' },
 ];
 
-const unitOptions: { value: 'ml' | 'glass' | 'bottle'; icon: React.ReactNode; label: string }[] = [
-  { value: 'ml', icon: <Droplet size={16} />, label: 'ml' },
+const containerOptions: { value: 'glass' | 'bottle' | 'none'; icon: React.ReactNode; label: string }[] = [
   { value: 'glass', icon: <GlassWater size={16} />, label: 'แก้ว' },
   { value: 'bottle', icon: <Container size={16} />, label: 'ขวด' },
+  { value: 'none', icon: <Package size={16} />, label: 'อื่นๆ' },
 ];
 
-const typeOptions: { value: 'water' | 'sweet' | 'other'; icon: React.ReactNode; label: string }[] = [
+const typeOptions: { value: 'water' | 'sweet' | 'coffee' | 'tea' | 'other'; icon: React.ReactNode; label: string }[] = [
   { value: 'water', icon: <Droplet size={16} />, label: 'น้ำเปล่า' },
   { value: 'sweet', icon: <CupSoda size={16} />, label: 'น้ำหวาน' },
-  { value: 'other', icon: <Coffee size={16} />, label: 'อื่นๆ' },
+  { value: 'coffee', icon: <Coffee size={16} />, label: 'กาแฟ' },
+  { value: 'tea', icon: <Coffee size={16} />, label: 'ชา' },
+  { value: 'other', icon: <Droplet size={16} />, label: 'อื่นๆ' },
 ];
 
 function getToday(): string {
@@ -45,33 +47,32 @@ function getNow(): string {
 export default function LogWaterModal({ isOpen, onClose, onSave }: LogWaterModalProps) {
   const [date, setDate] = useState(getToday());
   const [time, setTime] = useState(getNow());
-  const [amount, setAmount] = useState(250);
-  const [unit, setUnit] = useState<'ml' | 'glass' | 'bottle'>('ml');
-  const [type, setType] = useState<'water' | 'sweet' | 'other'>('water');
+  const [amount, setAmount] = useState('250');
+  const [unit, setUnit] = useState<'ml' | 'l'>('ml');
+  const [container, setContainer] = useState<'glass' | 'bottle' | 'none'>('glass');
+  const [type, setType] = useState<'water' | 'sweet' | 'coffee' | 'tea' | 'other'>('water');
   const [note, setNote] = useState('');
-  const [customAmount, setCustomAmount] = useState('');
 
   if (!isOpen) return null;
 
   const getAmountMl = (): number => {
-    const baseAmount = customAmount ? parseInt(customAmount) || 0 : amount;
-    if (unit === 'glass') return baseAmount * 250;
-    if (unit === 'bottle') return baseAmount * 500;
+    const baseAmount = parseFloat(amount) || 0;
+    if (unit === 'l') return baseAmount * 1000;
     return baseAmount;
   };
 
   const handleSave = () => {
     const amountMl = getAmountMl();
     if (amountMl <= 0) return;
-    onSave({ date, time, amountMl, unit, type, note: note || undefined });
+    onSave({ date, time, amountMl, unit, container, type, note: note || undefined });
     // Reset form
     setDate(getToday());
     setTime(getNow());
-    setAmount(250);
+    setAmount('250');
     setUnit('ml');
+    setContainer('glass');
     setType('water');
     setNote('');
-    setCustomAmount('');
     onClose();
   };
 
@@ -93,7 +94,7 @@ export default function LogWaterModal({ isOpen, onClose, onSave }: LogWaterModal
     borderRadius: '12px',
     border: '1.5px solid #E2E8F0',
     fontSize: '14px',
-    fontFamily: 'Inter, sans-serif',
+    fontFamily: `'Google Sans', 'Outfit', sans-serif`,
     color: '#1E293B',
     background: '#F8FAFC',
     outline: 'none',
@@ -104,7 +105,7 @@ export default function LogWaterModal({ isOpen, onClose, onSave }: LogWaterModal
     <div className="modal-overlay" onClick={(e) => {
       if (e.target === e.currentTarget) onClose();
     }}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '440px' }}>
         {/* Header */}
         <div style={{
           display: 'flex',
@@ -119,7 +120,7 @@ export default function LogWaterModal({ isOpen, onClose, onSave }: LogWaterModal
               fontWeight: 700,
               color: '#1E293B',
               margin: 0,
-            }}>บันทึกการดื่มน้ำ</h2>
+            }}>บันทึกการดื่ม</h2>
           </div>
           <button
             onClick={onClose}
@@ -134,7 +135,7 @@ export default function LogWaterModal({ isOpen, onClose, onSave }: LogWaterModal
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-            justifyContent: 'center',
+              justifyContent: 'center',
           }}
           ><X size={18} /></button>
         </div>
@@ -162,85 +163,71 @@ export default function LogWaterModal({ isOpen, onClose, onSave }: LogWaterModal
           </div>
         </div>
 
-        {/* Volume Presets */}
+        {/* Volume & Unit */}
         <div style={{ marginBottom: '20px' }}>
           <label style={labelStyle}><Ruler size={14} /> ปริมาณ</label>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', marginBottom: '10px' }}>
-            {volumePresets.map((p) => (
-              <button
-                key={p.value}
-                onClick={() => { setAmount(p.value); setCustomAmount(''); setUnit('ml'); }}
-                style={{
-                  padding: '12px 8px',
-                  borderRadius: '12px',
-                  border: amount === p.value && !customAmount && unit === 'ml'
-                    ? '2px solid #2563EB'
-                    : '2px solid #E2E8F0',
-                  background: amount === p.value && !customAmount && unit === 'ml'
-                    ? '#EFF6FF'
-                    : 'white',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: '4px',
-                  fontFamily: 'Inter, sans-serif',
-                }}
-              >
-                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '24px' }}>{p.icon}</span>
-                <span style={{
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  color: amount === p.value && !customAmount && unit === 'ml' ? '#2563EB' : '#64748B',
-                }}>{p.label}</span>
-              </button>
-            ))}
-          </div>
-          {/* Custom amount */}
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '12px' }}>
             <input
               type="number"
-              placeholder="กรอกจำนวน..."
-              value={customAmount}
-              onChange={(e) => setCustomAmount(e.target.value)}
-              style={{
-                ...inputStyle,
-                flex: 1,
-              }}
-              onFocus={() => setCustomAmount(customAmount || '')}
+              placeholder="กรอกปริมาณ..."
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              style={{ ...inputStyle, flex: 2 }}
             />
+            <div style={{ flex: 1, display: 'flex', gap: '4px', background: '#F1F5F9', padding: '4px', borderRadius: '12px' }}>
+              {unitOptions.map(u => (
+                <button
+                  key={u.value}
+                  onClick={() => setUnit(u.value)}
+                  style={{
+                    flex: 1,
+                    border: 'none',
+                    background: unit === u.value ? 'white' : 'transparent',
+                    borderRadius: '8px',
+                    boxShadow: unit === u.value ? '0 2px 4px rgba(0,0,0,0.05)' : 'none',
+                    cursor: 'pointer',
+                    fontSize: '13px',
+                    fontWeight: unit === u.value ? 700 : 500,
+                    color: unit === u.value ? '#0F172A' : '#64748B',
+                    fontFamily: `'Google Sans', 'Outfit', sans-serif`,
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  {u.value.toUpperCase()}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Unit */}
+        {/* Container */}
         <div style={{ marginBottom: '20px' }}>
-          <label style={labelStyle}><Ruler size={14} /> หน่วย</label>
+          <label style={labelStyle}><Container size={14} /> ภาชนะ</label>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-            {unitOptions.map((u) => (
+            {containerOptions.map((c) => (
               <button
-                key={u.value}
-                onClick={() => setUnit(u.value)}
+                key={c.value}
+                onClick={() => setContainer(c.value)}
                 style={{
                   padding: '10px',
                   borderRadius: '12px',
-                  border: unit === u.value ? '2px solid #2563EB' : '2px solid #E2E8F0',
-                  background: unit === u.value ? '#EFF6FF' : 'white',
+                  border: container === c.value ? '2px solid #2563EB' : '2px solid #E2E8F0',
+                  background: container === c.value ? '#EFF6FF' : 'white',
                   cursor: 'pointer',
                   transition: 'all 0.2s',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '6px',
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: `'Google Sans', 'Outfit', sans-serif`,
                 }}
               >
-                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{u.icon}</span>
+                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{c.icon}</span>
                 <span style={{
                   fontSize: '13px',
                   fontWeight: 600,
-                  color: unit === u.value ? '#2563EB' : '#64748B',
-                }}>{u.label}</span>
+                  color: container === c.value ? '#2563EB' : '#64748B',
+                }}>{c.label}</span>
               </button>
             ))}
           </div>
@@ -248,14 +235,14 @@ export default function LogWaterModal({ isOpen, onClose, onSave }: LogWaterModal
 
         {/* Type */}
         <div style={{ marginBottom: '20px' }}>
-          <label style={labelStyle}><CupSoda size={14} /> ประเภท</label>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+          <label style={labelStyle}><CupSoda size={14} /> ประเภทเครื่องดื่ม</label>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
             {typeOptions.map((t) => (
               <button
                 key={t.value}
                 onClick={() => setType(t.value)}
                 style={{
-                  padding: '10px',
+                  padding: '8px 12px',
                   borderRadius: '12px',
                   border: type === t.value ? '2px solid #2563EB' : '2px solid #E2E8F0',
                   background: type === t.value ? '#EFF6FF' : 'white',
@@ -265,7 +252,8 @@ export default function LogWaterModal({ isOpen, onClose, onSave }: LogWaterModal
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '6px',
-                  fontFamily: 'Inter, sans-serif',
+                  flexGrow: 1,
+                  fontFamily: `'Google Sans', 'Outfit', sans-serif`,
                 }}
               >
                 <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t.icon}</span>

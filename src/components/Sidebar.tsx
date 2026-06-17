@@ -107,7 +107,7 @@ export default function Sidebar({ activePage, onPageChange, onLogWater, profile,
                 fontSize: '14px',
                 fontWeight: activePage === item.page ? 600 : 500,
                 transition: 'all 0.2s ease',
-                fontFamily: 'Inter, sans-serif',
+                fontFamily: `'Google Sans', 'Outfit', sans-serif`,
                 textAlign: 'left',
                 border: activePage === item.page ? '1px solid #E2E8F0' : '1px solid transparent',
                 boxShadow: activePage === item.page
@@ -147,7 +147,7 @@ export default function Sidebar({ activePage, onPageChange, onLogWater, profile,
             fontSize: '14px',
             fontWeight: 500,
             transition: 'all 0.2s ease',
-            fontFamily: 'Inter, sans-serif',
+            fontFamily: `'Google Sans', 'Outfit', sans-serif`,
             textAlign: 'left',
           }}
           onMouseEnter={(e) => {

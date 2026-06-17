@@ -266,7 +266,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             color: '#64748B',
             fontSize: '14px',
             cursor: 'pointer',
-            fontFamily: 'Inter, sans-serif',
+            fontFamily: `'Google Sans', 'Outfit', sans-serif`,
             display: 'inline-flex',
             alignItems: 'center',
             gap: '6px',

@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useWaterData } from './hooks/useWaterData';
-import type { Page } from './types';
+import type { Page, QuickPreset } from './types';
 import Onboarding from './components/Onboarding';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
@@ -28,6 +28,7 @@ function App() {
     getDailyTotalsForMonth,
     getMonthlyTotalsForYear,
     clearAllData,
+    presets,
   } = useWaterData();
 
   const [activePage, setActivePage] = useState<Page>('home');
@@ -37,13 +38,14 @@ function App() {
   const todayLogs = getLogsByDate(todayStr);
   const todayTotal = getDailyTotal(todayStr);
 
-  const handleQuickAdd = useCallback((amountMl: number) => {
+  const handleQuickAdd = useCallback((preset: QuickPreset) => {
     addLog({
       date: todayStr,
       time: getNow(),
-      amountMl,
-      unit: 'ml',
-      type: 'water',
+      amountMl: preset.amountMl,
+      unit: preset.unit,
+      container: preset.container,
+      type: preset.type,
     });
   }, [addLog, todayStr]);
 
@@ -81,6 +83,7 @@ function App() {
             profile={profile}
             todayLogs={todayLogs}
             dailyTotal={todayTotal}
+            presets={presets}
             onLogWater={() => setShowLogModal(true)}
             onDeleteLog={deleteLog}
             onQuickAdd={handleQuickAdd}
