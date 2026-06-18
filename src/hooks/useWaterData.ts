@@ -218,12 +218,17 @@ export function useWaterData() {
     setPresets(DEFAULT_PRESETS);
   }, []);
 
+  const editLog = useCallback((id: string, updates: Partial<Omit<WaterLog, 'id'>>) => {
+    setLogs(prev => prev.map(l => l.id === id ? { ...l, ...updates } : l));
+  }, []);
+
   return {
     profile,
     setProfile,
     logs,
     addLog,
     deleteLog,
+    editLog,
     getLogsByDate,
     getLogsByMonth,
     getLogsByYear,

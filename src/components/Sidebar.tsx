@@ -232,29 +232,6 @@ export default function Sidebar({ activePage, onPageChange, onLogWater, profile,
           <SettingsIcon size={22} color="#94A3B8" style={{ opacity: 0.5 }} />
           <span style={{ fontSize: '10px', fontWeight: 500, color: '#94A3B8' }}>Settings</span>
         </button>
-        {/* Floating Log Button on mobile */}
-        <button
-          onClick={onLogWater}
-          style={{
-            position: 'absolute',
-            top: '-24px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: '56px',
-            height: '56px',
-            borderRadius: '50%',
-            background: '#0F172A',
-            border: '4px solid white',
-            color: 'white',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 4px 16px rgba(15, 23, 42, 0.2)',
-          }}
-        >
-          <Plus size={24} />
-        </button>
       </nav>
 
       {/* Settings Modal */}

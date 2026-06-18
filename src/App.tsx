@@ -6,6 +6,8 @@ import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import LogWaterModal from './components/LogWaterModal';
 import History from './components/History';
+import MobileNavbar from './components/MobileNavbar';
+import { Plus } from 'lucide-react';
 
 function getToday(): string {
   const d = new Date();
@@ -23,12 +25,16 @@ function App() {
     setProfile,
     addLog,
     deleteLog,
+    editLog,
     getLogsByDate,
     getDailyTotal,
     getDailyTotalsForMonth,
     getMonthlyTotalsForYear,
     clearAllData,
     presets,
+    addPreset,
+    editPreset,
+    deletePreset,
   } = useWaterData();
 
   const [activePage, setActivePage] = useState<Page>('home');
@@ -62,6 +68,7 @@ function App() {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
+      <MobileNavbar />
       <Sidebar
         activePage={activePage}
         onPageChange={setActivePage}
@@ -84,8 +91,12 @@ function App() {
             todayLogs={todayLogs}
             dailyTotal={todayTotal}
             presets={presets}
+            onAddPreset={addPreset}
+            onEditPreset={editPreset}
+            onDeletePreset={deletePreset}
             onLogWater={() => setShowLogModal(true)}
             onDeleteLog={deleteLog}
+            onEditLog={editLog}
             onQuickAdd={handleQuickAdd}
           />
         )}
@@ -109,10 +120,39 @@ function App() {
         onSave={(log) => addLog(log)}
       />
 
+      {/* Mobile Floating Action Button (FAB) */}
+      <button
+        onClick={() => setShowLogModal(true)}
+        className="mobile-fab"
+        style={{
+          position: 'fixed',
+          bottom: '80px', /* Above the bottom navigation */
+          right: '24px',
+          width: '56px',
+          height: '56px',
+          borderRadius: '50%',
+          background: '#2563EB',
+          color: 'white',
+          border: 'none',
+          cursor: 'pointer',
+          display: 'none', // Hidden on desktop, shown via CSS on mobile
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 4px 16px rgba(37, 99, 235, 0.4)',
+          zIndex: 110,
+        }}
+      >
+        <Plus size={28} />
+      </button>
+
       <style>{`
         @media (max-width: 768px) {
           .main-content {
             margin-left: 0 !important;
+            padding-bottom: 90px !important;
+          }
+          .mobile-fab {
+            display: flex !important;
           }
         }
       `}</style>

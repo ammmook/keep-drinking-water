@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Droplet, Coffee, CupSoda, GlassWater, Calendar, Clock, Ruler, X, FileText, Container, CheckCircle, Package } from 'lucide-react';
+import { Droplet, Coffee, CupSoda, GlassWater, Calendar, Clock, Ruler, X, FileText, CheckCircle, Package } from 'lucide-react';
+import BottleSVG from './icons/BottleSVG';
 
 interface LogWaterModalProps {
   isOpen: boolean;
@@ -22,7 +23,7 @@ const unitOptions: { value: 'ml' | 'l'; label: string }[] = [
 
 const containerOptions: { value: 'glass' | 'bottle' | 'none'; icon: React.ReactNode; label: string }[] = [
   { value: 'glass', icon: <GlassWater size={16} />, label: 'แก้ว' },
-  { value: 'bottle', icon: <Container size={16} />, label: 'ขวด' },
+  { value: 'bottle', icon: <BottleSVG size={16} />, label: 'ขวด' },
   { value: 'none', icon: <Package size={16} />, label: 'อื่นๆ' },
 ];
 
@@ -163,46 +164,31 @@ export default function LogWaterModal({ isOpen, onClose, onSave }: LogWaterModal
           </div>
         </div>
 
-        {/* Volume & Unit */}
+        {/* Volume */}
         <div style={{ marginBottom: '20px' }}>
-          <label style={labelStyle}><Ruler size={14} /> ปริมาณ</label>
-          <div style={{ display: 'flex', gap: '12px' }}>
+          <label style={labelStyle}>
+            <Ruler size={14} /> ปริมาณ ({amount} ml)
+          </label>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <input
-              type="number"
-              placeholder="กรอกปริมาณ..."
+              type="range"
+              min="50"
+              max="2000"
+              step="50"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              style={{ ...inputStyle, flex: 2 }}
+              style={{ width: '100%', accentColor: '#2563EB', cursor: 'pointer' }}
             />
-            <div style={{ flex: 1, display: 'flex', gap: '4px', background: '#F1F5F9', padding: '4px', borderRadius: '12px' }}>
-              {unitOptions.map(u => (
-                <button
-                  key={u.value}
-                  onClick={() => setUnit(u.value)}
-                  style={{
-                    flex: 1,
-                    border: 'none',
-                    background: unit === u.value ? 'white' : 'transparent',
-                    borderRadius: '8px',
-                    boxShadow: unit === u.value ? '0 2px 4px rgba(0,0,0,0.05)' : 'none',
-                    cursor: 'pointer',
-                    fontSize: '13px',
-                    fontWeight: unit === u.value ? 700 : 500,
-                    color: unit === u.value ? '#0F172A' : '#64748B',
-                    fontFamily: `'Google Sans', 'Outfit', sans-serif`,
-                    transition: 'all 0.2s',
-                  }}
-                >
-                  {u.value.toUpperCase()}
-                </button>
-              ))}
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#94A3B8' }}>
+              <span>50 ml</span>
+              <span>2000 ml</span>
             </div>
           </div>
         </div>
 
         {/* Container */}
         <div style={{ marginBottom: '20px' }}>
-          <label style={labelStyle}><Container size={14} /> ภาชนะ</label>
+          <label style={labelStyle}><BottleSVG size={14} /> ภาชนะ</label>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
             {containerOptions.map((c) => (
               <button

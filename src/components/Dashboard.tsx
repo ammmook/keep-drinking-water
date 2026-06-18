@@ -1,15 +1,22 @@
 import { useState, useEffect } from 'react';
 import WaterBottle from './WaterBottle';
 import type { WaterLog, UserProfile, QuickPreset } from '../types';
-import { Droplet, Coffee, CupSoda, Plus, Trash2, BarChart2, List, Smile, Frown, Inbox, GlassWater, Target, CircleCheck, Container, Package } from 'lucide-react';
+import { Droplet, Coffee, CupSoda, Plus, Trash2, BarChart2, List, Smile, Frown, Inbox, GlassWater, Target, CircleCheck, Package, Settings2 } from 'lucide-react';
+import BottleSVG from './icons/BottleSVG';
+import ManagePresetsModal from './ManagePresetsModal';
+import VisualLog from './VisualLog';
 
 interface DashboardProps {
   profile: UserProfile;
   todayLogs: WaterLog[];
   dailyTotal: number;
   presets: QuickPreset[];
+  onAddPreset: (preset: Omit<QuickPreset, 'id'>) => void;
+  onEditPreset: (id: string, preset: Partial<QuickPreset>) => void;
+  onDeletePreset: (id: string) => void;
   onLogWater: () => void;
   onDeleteLog: (id: string) => void;
+  onEditLog: (id: string, updates: Partial<Omit<WaterLog, 'id'>>) => void;
   onQuickAdd: (preset: QuickPreset) => void;
 }
 
@@ -19,14 +26,14 @@ export function getLogIcon(type: string, container: string, size = 20): React.Re
   if (type === 'sweet') return <CupSoda size={size} color="#F59E0B" />;
   
   if (container === 'glass') return <GlassWater size={size} color="#0EA5E9" />;
-  if (container === 'bottle') return <Container size={size} color="#0EA5E9" />;
+  if (container === 'bottle') return <BottleSVG size={size} color="#0EA5E9" />;
   if (container === 'none') return <Package size={size} color="#64748B" />;
   return <Droplet size={size} color="#0EA5E9" />;
 }
 
 export function getPresetIcon(iconName: string, size = 24): React.ReactNode {
   if (iconName === 'glass') return <GlassWater size={size} color="#64748B" />;
-  if (iconName === 'bottle') return <Container size={size} color="#64748B" />;
+  if (iconName === 'bottle') return <BottleSVG size={size} color="#64748B" />;
   return <Droplet size={size} color="#64748B" />;
 }
 
@@ -46,10 +53,11 @@ function formatTime(time: string): string {
   return `${String(displayHour).padStart(2, '0')}:${m} ${period}`;
 }
 
-export default function Dashboard({ profile, todayLogs, dailyTotal, presets, onLogWater, onDeleteLog, onQuickAdd }: DashboardProps) {
+export default function Dashboard({ profile, todayLogs, dailyTotal, presets, onAddPreset, onEditPreset, onDeletePreset, onLogWater, onDeleteLog, onEditLog, onQuickAdd }: DashboardProps) {
   const percentage = Math.round((dailyTotal / profile.dailyGoalMl) * 100);
   const goalReached = dailyTotal >= profile.dailyGoalMl;
   const [showCelebrate, setShowCelebrate] = useState(false);
+  const [showManagePresets, setShowManagePresets] = useState(false);
 
   useEffect(() => {
     if (goalReached) {
@@ -84,13 +92,6 @@ export default function Dashboard({ profile, todayLogs, dailyTotal, presets, onL
             {new Date().toLocaleDateString('th-TH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
         </div>
-        <button
-          className="btn-primary"
-          onClick={onLogWater}
-          style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
-        >
-          <Plus size={18} /> Log Water
-        </button>
       </div>
 
       {/* Main content: Bottle + Quick Add */}
@@ -149,20 +150,46 @@ export default function Dashboard({ profile, todayLogs, dailyTotal, presets, onL
         </div>
 
         {/* Right column: Quick Add + Stats */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }} className="dashboard-right">
           {/* Quick Add */}
           <div className="glass-card" style={{ padding: '24px' }}>
-            <h3 style={{
-              fontSize: '15px',
-              fontWeight: 700,
-              color: '#1E293B',
-              marginBottom: '16px',
+            <div style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
+              justifyContent: 'space-between',
+              marginBottom: '16px',
             }}>
-              ⚡ เพิ่มเร็ว
-            </h3>
+              <h3 style={{
+                fontSize: '15px',
+                fontWeight: 700,
+                color: '#1E293B',
+                margin: 0,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}>
+                ⚡ เพิ่มเร็ว
+              </h3>
+              <button 
+                onClick={() => setShowManagePresets(true)}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#94A3B8',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  transition: 'color 0.2s',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.color = '#64748B')}
+                onMouseLeave={e => (e.currentTarget.style.color = '#94A3B8')}
+              >
+                <Settings2 size={14} /> จัดการ
+              </button>
+            </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))', gap: '10px' }}>
               {presets.map((preset) => (
                 <button
@@ -295,107 +322,53 @@ export default function Dashboard({ profile, todayLogs, dailyTotal, presets, onL
             <p style={{ fontSize: '14px' }}>ยังไม่มีบันทึก — เริ่มดื่มน้ำกันเลย!</p>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'flex-end',
+            gap: '12px',
+            overflowX: 'auto',
+            padding: '16px 8px 32px 8px',
+            scrollSnapType: 'x mandatory',
+            WebkitOverflowScrolling: 'touch',
+          }}>
             {todayLogs.map((log, i) => (
-              <div
-                key={log.id}
-                className="animate-fadeInUp"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '14px',
-                  padding: '14px 16px',
-                  background: '#F8FAFC',
-                  borderRadius: '14px',
-                  border: '1px solid #F1F5F9',
-                  animationDelay: `${i * 50}ms`,
-                  transition: 'all 0.2s',
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLDivElement).style.background = '#EFF6FF';
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLDivElement).style.background = '#F8FAFC';
-                }}
-              >
-                <span style={{
-                  width: '40px',
-                  height: '40px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  background: 'white',
-                  borderRadius: '12px',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-                  flexShrink: 0,
-                }}>
-                  {getLogIcon(log.type, log.container)}
-                </span>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: '14px', fontWeight: 600, color: '#1E293B' }}>
-                    {log.amountMl}ml {typeLabels[log.type] || 'อื่นๆ'}
-                  </div>
-                  {log.note && (
-                    <div style={{
-                      fontSize: '12px',
-                      color: '#94A3B8',
-                      marginTop: '2px',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                    }}>
-                      {log.note}
-                    </div>
-                  )}
-                </div>
-                <div style={{
-                  fontSize: '12px',
-                  color: '#94A3B8',
-                  fontWeight: 500,
-                  flexShrink: 0,
-                }}>
-                  {formatTime(log.time)}
-                </div>
-                <button
-                  onClick={() => onDeleteLog(log.id)}
-                  style={{
-                    width: '30px',
-                    height: '30px',
-                    borderRadius: '8px',
-                    border: 'none',
-                    background: 'transparent',
-                    color: '#CBD5E1',
-                    fontSize: '14px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transition: 'all 0.2s',
-                    flexShrink: 0,
+              <div key={log.id} style={{ scrollSnapAlign: 'start', flexShrink: 0 }}>
+                <VisualLog
+                  log={log}
+                  onEdit={(log) => {
+                    // For now, since LogWaterModal handles adding, editing might need a separate flow or we pass it to a special edit state.
+                    // Let's implement a simple prompt for amount edit, or if the user wants full edit, we could open the LogWaterModal in edit mode.
+                    // The instruction says "ถ้ากดค้าง จะให้เลือกว่า ลบหรือแก้ไข"
+                    // Wait, we need to pass the updated data to onEditLog.
+                    // Let's just ask the user for the new amount via a simple prompt for now, or just let them delete and re-add.
+                    const newAmount = window.prompt(`แก้ไขปริมาณน้ำสำหรับบันทึกนี้ (ml):`, log.amountMl.toString());
+                    if (newAmount && !isNaN(Number(newAmount))) {
+                      onEditLog(log.id, { amountMl: Number(newAmount) });
+                    }
                   }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLButtonElement).style.color = '#EF4444';
-                    (e.currentTarget as HTMLButtonElement).style.background = '#FEF2F2';
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLButtonElement).style.color = '#CBD5E1';
-                    (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
-                  }}
-                  title="ลบ"
-                >
-                  <Trash2 size={16} />
-                </button>
+                  onDelete={onDeleteLog}
+                />
               </div>
             ))}
           </div>
         )}
       </div>
 
+      <ManagePresetsModal 
+        isOpen={showManagePresets}
+        onClose={() => setShowManagePresets(false)}
+        presets={presets}
+        onAdd={onAddPreset}
+        onEdit={onEditPreset}
+        onDelete={onDeletePreset}
+      />
+
       {/* Responsive grid */}
       <style>{`
         @media (max-width: 768px) {
           .dashboard-grid {
-            grid-template-columns: 1fr !important;
+            display: flex !important;
+            flex-direction: column-reverse !important;
           }
         }
       `}</style>
