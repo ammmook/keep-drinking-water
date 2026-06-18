@@ -1,7 +1,7 @@
 import { useState, useMemo, useId } from 'react';
 import type { ViewMode, WaterLog, UserProfile } from '../types';
 import { Droplet, Calendar as CalendarIcon, BarChart2, TrendingUp, Trash2, Smile, Frown, Moon, ChevronLeft, ChevronRight, Target } from 'lucide-react';
-import { getLogIcon, typeLabels } from './Dashboard';
+import { getLogIcon, typeLabels } from './utils';
 
 interface HistoryProps {
   profile: UserProfile;

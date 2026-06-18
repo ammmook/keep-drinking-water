@@ -94,7 +94,6 @@ function App() {
             onAddPreset={addPreset}
             onEditPreset={editPreset}
             onDeletePreset={deletePreset}
-            onLogWater={() => setShowLogModal(true)}
             onDeleteLog={deleteLog}
             onEditLog={editLog}
             onQuickAdd={handleQuickAdd}

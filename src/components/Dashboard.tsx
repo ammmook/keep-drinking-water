@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import WaterBottle from './WaterBottle';
 import type { WaterLog, UserProfile, QuickPreset } from '../types';
-import { Droplet, Coffee, CupSoda, Plus, Trash2, BarChart2, List, Smile, Frown, Inbox, GlassWater, Target, CircleCheck, Package, Settings2 } from 'lucide-react';
-import BottleSVG from './icons/BottleSVG';
+import { Droplet, BarChart2, List, Smile, Frown, Inbox, GlassWater, Target, CircleCheck, Settings2 } from 'lucide-react';
 import ManagePresetsModal from './ManagePresetsModal';
 import VisualLog from './VisualLog';
+import { getPresetIcon } from './utils';
 
 interface DashboardProps {
   profile: UserProfile;
@@ -14,57 +14,25 @@ interface DashboardProps {
   onAddPreset: (preset: Omit<QuickPreset, 'id'>) => void;
   onEditPreset: (id: string, preset: Partial<QuickPreset>) => void;
   onDeletePreset: (id: string) => void;
-  onLogWater: () => void;
   onDeleteLog: (id: string) => void;
   onEditLog: (id: string, updates: Partial<Omit<WaterLog, 'id'>>) => void;
   onQuickAdd: (preset: QuickPreset) => void;
 }
 
-export function getLogIcon(type: string, container: string, size = 20): React.ReactNode {
-  if (type === 'coffee') return <Coffee size={size} color="#8B5CF6" />;
-  if (type === 'tea') return <Coffee size={size} color="#10B981" />;
-  if (type === 'sweet') return <CupSoda size={size} color="#F59E0B" />;
-  
-  if (container === 'glass') return <GlassWater size={size} color="#0EA5E9" />;
-  if (container === 'bottle') return <BottleSVG size={size} color="#0EA5E9" />;
-  if (container === 'none') return <Package size={size} color="#64748B" />;
-  return <Droplet size={size} color="#0EA5E9" />;
-}
-
-export function getPresetIcon(iconName: string, size = 24): React.ReactNode {
-  if (iconName === 'glass') return <GlassWater size={size} color="#64748B" />;
-  if (iconName === 'bottle') return <BottleSVG size={size} color="#64748B" />;
-  return <Droplet size={size} color="#64748B" />;
-}
-
-export const typeLabels: Record<string, string> = {
-  water: 'น้ำเปล่า',
-  sweet: 'น้ำหวาน',
-  coffee: 'กาแฟ',
-  tea: 'ชา',
-  other: 'อื่นๆ',
-};
-
-function formatTime(time: string): string {
-  const [h, m] = time.split(':');
-  const hour = parseInt(h);
-  const period = hour >= 12 ? 'PM' : 'AM';
-  const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
-  return `${String(displayHour).padStart(2, '0')}:${m} ${period}`;
-}
-
-export default function Dashboard({ profile, todayLogs, dailyTotal, presets, onAddPreset, onEditPreset, onDeletePreset, onLogWater, onDeleteLog, onEditLog, onQuickAdd }: DashboardProps) {
+export default function Dashboard({ profile, todayLogs, dailyTotal, presets, onAddPreset, onEditPreset, onDeletePreset, onDeleteLog, onEditLog, onQuickAdd }: DashboardProps) {
   const percentage = Math.round((dailyTotal / profile.dailyGoalMl) * 100);
   const goalReached = dailyTotal >= profile.dailyGoalMl;
   const [showCelebrate, setShowCelebrate] = useState(false);
   const [showManagePresets, setShowManagePresets] = useState(false);
+  const prevGoalReached = useRef(goalReached);
 
   useEffect(() => {
-    if (goalReached) {
+    if (goalReached && !prevGoalReached.current) {
       setShowCelebrate(true);
       const timer = setTimeout(() => setShowCelebrate(false), 1500);
       return () => clearTimeout(timer);
     }
+    prevGoalReached.current = goalReached;
   }, [goalReached]);
 
   return (
@@ -331,7 +299,7 @@ export default function Dashboard({ profile, todayLogs, dailyTotal, presets, onA
             scrollSnapType: 'x mandatory',
             WebkitOverflowScrolling: 'touch',
           }}>
-            {todayLogs.map((log, i) => (
+            {todayLogs.map((log) => (
               <div key={log.id} style={{ scrollSnapAlign: 'start', flexShrink: 0 }}>
                 <VisualLog
                   log={log}

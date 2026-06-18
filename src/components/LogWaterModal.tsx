@@ -16,10 +16,8 @@ interface LogWaterModalProps {
   }) => void;
 }
 
-const unitOptions: { value: 'ml' | 'l'; label: string }[] = [
-  { value: 'ml', label: 'มิลลิลิตร (ml)' },
-  { value: 'l', label: 'ลิตร (L)' },
-];
+
+
 
 const containerOptions: { value: 'glass' | 'bottle' | 'none'; icon: React.ReactNode; label: string }[] = [
   { value: 'glass', icon: <GlassWater size={16} />, label: 'แก้ว' },

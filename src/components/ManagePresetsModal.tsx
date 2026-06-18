@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { QuickPreset } from '../types';
 import { X, Plus, Trash2, Edit2, Settings } from 'lucide-react';
-import { getPresetIcon } from './Dashboard';
+import { getPresetIcon } from './utils';
 
 interface ManagePresetsModalProps {
   isOpen: boolean;

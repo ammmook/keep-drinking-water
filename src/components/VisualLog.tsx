@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import type { WaterLog } from '../types';
 import { Pencil, Trash2 } from 'lucide-react';
-import { typeLabels } from './Dashboard';
+import { typeLabels } from './utils';
 
 interface VisualLogProps {
   log: WaterLog;
@@ -48,7 +48,7 @@ export default function VisualLog({ log, onEdit, onDelete }: VisualLogProps) {
   // Max height limit
   const baseHeight = Math.min(140, Math.max(50, (log.amountMl / 250) * 60));
   const height = baseHeight;
-  
+
   // Width depends on container type but is capped
   const isBottle = log.container === 'bottle';
   // Give it a max width so large amounts don't become fat blocks
@@ -56,15 +56,15 @@ export default function VisualLog({ log, onEdit, onDelete }: VisualLogProps) {
   const width = Math.min(maxWidth, isBottle ? height * 0.45 : height * 0.65);
 
   // Colors with gradients
-  const baseColor = log.type === 'water' ? '#38BDF8' : 
-                    log.type === 'coffee' ? '#8B5CF6' : 
-                    log.type === 'tea' ? '#10B981' : 
-                    log.type === 'sweet' ? '#F59E0B' : '#64748B';
-                    
-  const darkColor = log.type === 'water' ? '#0284C7' : 
-                    log.type === 'coffee' ? '#5B21B6' : 
-                    log.type === 'tea' ? '#047857' : 
-                    log.type === 'sweet' ? '#B45309' : '#334155';
+  const baseColor = log.type === 'water' ? '#38BDF8' :
+    log.type === 'coffee' ? '#8B5CF6' :
+      log.type === 'tea' ? '#10B981' :
+        log.type === 'sweet' ? '#F59E0B' : '#64748B';
+
+  const darkColor = log.type === 'water' ? '#0284C7' :
+    log.type === 'coffee' ? '#5B21B6' :
+      log.type === 'tea' ? '#047857' :
+        log.type === 'sweet' ? '#B45309' : '#334155';
 
   const formatTime = (time: string) => {
     const [h, m] = time.split(':');
@@ -75,7 +75,7 @@ export default function VisualLog({ log, onEdit, onDelete }: VisualLogProps) {
   };
 
   return (
-    <div 
+    <div
       ref={containerRef}
       style={{
         display: 'flex',
@@ -183,7 +183,7 @@ export default function VisualLog({ log, onEdit, onDelete }: VisualLogProps) {
         width: `${width}px`,
         height: `${isBottle ? height * 1.15 : height}px`, // Add space for neck
       }}>
-        
+
         {/* Bottle components */}
         {isBottle && (
           <>
@@ -256,7 +256,7 @@ export default function VisualLog({ log, onEdit, onDelete }: VisualLogProps) {
               height: '4px',
               background: 'rgba(255, 255, 255, 0.4)',
             }} />
-            
+
             {/* Liquid highlight (Glass curve) */}
             <div style={{
               position: 'absolute',
