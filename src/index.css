@@ -295,3 +295,86 @@ body {
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.15);
   animation: scaleIn 0.3s ease-out;
 }
+
+/* ===== Quick Add Ripple ===== */
+
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+@keyframes quickAddPop {
+  0% { transform: scale(1); }
+  40% { transform: scale(0.92); }
+  70% { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+
+.quick-add-btn {
+  position: relative;
+  overflow: hidden;
+  padding: 14px 8px;
+  border-radius: 14px;
+  border: 2px solid #E2E8F0;
+  background: white;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-family: 'Google Sans', 'Outfit', sans-serif;
+  transition: all 0.2s ease;
+}
+
+.quick-add-btn:hover {
+  border-color: #3B82F6;
+  background: #EFF6FF;
+  transform: translateY(-2px);
+}
+
+.quick-add-btn:active {
+  transform: scale(0.93);
+  border-color: #2563EB;
+  background: #DBEAFE;
+}
+
+.quick-add-btn.pressed {
+  animation: quickAddPop 0.4s ease-out;
+}
+
+.quick-add-btn .ripple-effect {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.3);
+  animation: ripple 0.6s ease-out forwards;
+  pointer-events: none;
+}
+
+/* ===== Mobile Responsive ===== */
+
+@media (max-width: 768px) {
+  .dashboard-grid {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .dashboard-grid .glass-card {
+    min-height: unset !important;
+  }
+
+  .glass-card {
+    border-radius: 16px;
+  }
+
+  .modal-content {
+    padding: 24px;
+    border-radius: 20px;
+  }
+}

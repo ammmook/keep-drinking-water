@@ -9,16 +9,57 @@ interface VisualLogProps {
   onDelete: (id: string) => void;
 }
 
+// Liquid colors based on drink type
+function getLiquidColors(type: string): { base: string; dark: string; surface: string; opacity: number } {
+  switch (type) {
+    case 'water':
+      return {
+        base: '#7DD3FC',    // Light sky blue
+        dark: '#38BDF8',    // Deeper blue
+        surface: 'rgba(255, 255, 255, 0.6)',
+        opacity: 0.75,
+      };
+    case 'coffee':
+      return {
+        base: '#78350F',    // Dark brown
+        dark: '#451A03',    // Very dark brown/black
+        surface: 'rgba(180, 140, 100, 0.4)',
+        opacity: 0.95,
+      };
+    case 'tea':
+      return {
+        base: '#D4A76A',    // Light transparent brown
+        dark: '#A67B3D',    // Amber brown
+        surface: 'rgba(255, 220, 170, 0.5)',
+        opacity: 0.7,
+      };
+    case 'sweet':
+      return {
+        base: '#FB923C',    // Orange
+        dark: '#EA580C',    // Deep orange
+        surface: 'rgba(255, 200, 120, 0.5)',
+        opacity: 0.85,
+      };
+    default: // 'other'
+      return {
+        base: '#E2E8F0',    // White/light gray
+        dark: '#CBD5E1',    // Slightly darker
+        surface: 'rgba(255, 255, 255, 0.7)',
+        opacity: 0.6,
+      };
+  }
+}
+
 export default function VisualLog({ log, onEdit, onDelete }: VisualLogProps) {
   const [showMenu, setShowMenu] = useState(false);
   const pressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handlePointerDown = (e: React.PointerEvent) => {
-    e.preventDefault(); // Prevent default text selection
+    e.preventDefault();
     pressTimer.current = setTimeout(() => {
       setShowMenu(true);
-    }, 500); // 500ms long press
+    }, 500);
   };
 
   const handlePointerUp = () => {
@@ -45,26 +86,14 @@ export default function VisualLog({ log, onEdit, onDelete }: VisualLogProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Max height limit
-  const baseHeight = Math.min(140, Math.max(50, (log.amountMl / 250) * 60));
-  const height = baseHeight;
+  // Consistent glass dimensions — height scales with amount, width stays proportional
+  const glassHeight = Math.min(110, Math.max(50, (log.amountMl / 250) * 55));
+  const glassWidth = Math.min(52, Math.max(30, glassHeight * 0.55));
 
-  // Width depends on container type but is capped
-  const isBottle = log.container === 'bottle';
-  // Give it a max width so large amounts don't become fat blocks
-  const maxWidth = isBottle ? 45 : 55;
-  const width = Math.min(maxWidth, isBottle ? height * 0.45 : height * 0.65);
+  // Fill percentage — more liquid = higher fill
+  const fillPercent = Math.min(92, Math.max(25, (log.amountMl / 500) * 85));
 
-  // Colors with gradients
-  const baseColor = log.type === 'water' ? '#38BDF8' :
-    log.type === 'coffee' ? '#8B5CF6' :
-      log.type === 'tea' ? '#10B981' :
-        log.type === 'sweet' ? '#F59E0B' : '#64748B';
-
-  const darkColor = log.type === 'water' ? '#0284C7' :
-    log.type === 'coffee' ? '#5B21B6' :
-      log.type === 'tea' ? '#047857' :
-        log.type === 'sweet' ? '#B45309' : '#334155';
+  const liquid = getLiquidColors(log.type);
 
   const formatTime = (time: string) => {
     const [h, m] = time.split(':');
@@ -82,13 +111,13 @@ export default function VisualLog({ log, onEdit, onDelete }: VisualLogProps) {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'flex-end',
-        gap: '8px',
+        gap: '6px',
         position: 'relative',
         cursor: 'pointer',
         userSelect: 'none',
-        height: '180px', // Fixed height for the shelf slot
-        padding: '0 4px',
-        minWidth: '60px',
+        height: '160px',
+        padding: '0 3px',
+        minWidth: '56px',
       }}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
@@ -105,16 +134,16 @@ export default function VisualLog({ log, onEdit, onDelete }: VisualLogProps) {
           bottom: '100%',
           left: '50%',
           transform: 'translateX(-50%)',
-          marginBottom: '8px',
+          marginBottom: '6px',
           background: 'white',
           borderRadius: '12px',
           boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
-          padding: '8px',
+          padding: '6px',
           display: 'flex',
           flexDirection: 'column',
-          gap: '4px',
+          gap: '2px',
           zIndex: 50,
-          minWidth: '120px',
+          minWidth: '110px',
           border: '1px solid #E2E8F0',
           animation: 'fadeInUp 0.2s ease-out'
         }}>
@@ -127,13 +156,13 @@ export default function VisualLog({ log, onEdit, onDelete }: VisualLogProps) {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
-              padding: '8px 12px',
+              gap: '6px',
+              padding: '7px 10px',
               border: 'none',
               background: 'transparent',
               borderRadius: '8px',
               cursor: 'pointer',
-              fontSize: '13px',
+              fontSize: '12px',
               fontWeight: 500,
               color: '#334155',
               width: '100%',
@@ -142,7 +171,7 @@ export default function VisualLog({ log, onEdit, onDelete }: VisualLogProps) {
             onMouseEnter={e => e.currentTarget.style.background = '#F1F5F9'}
             onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
           >
-            <Pencil size={14} color="#3B82F6" /> แก้ไข
+            <Pencil size={13} color="#3B82F6" /> แก้ไข
           </button>
           <button
             onClick={(e) => {
@@ -153,13 +182,13 @@ export default function VisualLog({ log, onEdit, onDelete }: VisualLogProps) {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
-              padding: '8px 12px',
+              gap: '6px',
+              padding: '7px 10px',
               border: 'none',
               background: 'transparent',
               borderRadius: '8px',
               cursor: 'pointer',
-              fontSize: '13px',
+              fontSize: '12px',
               fontWeight: 500,
               color: '#EF4444',
               width: '100%',
@@ -168,126 +197,121 @@ export default function VisualLog({ log, onEdit, onDelete }: VisualLogProps) {
             onMouseEnter={e => e.currentTarget.style.background = '#FEF2F2'}
             onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
           >
-            <Trash2 size={14} /> ลบ
+            <Trash2 size={13} /> ลบ
           </button>
         </div>
       )}
 
-      {/* The Container Visual */}
+      {/* Glass Container — consistent shape for ALL drink types */}
       <div style={{
         position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-        width: `${width}px`,
-        height: `${isBottle ? height * 1.15 : height}px`, // Add space for neck
+        width: `${glassWidth}px`,
+        height: `${glassHeight}px`,
       }}>
+        {/* Glass body — SVG for consistent tapered glass shape */}
+        <svg
+          viewBox="0 0 60 80"
+          width={glassWidth}
+          height={glassHeight}
+          style={{ display: 'block', overflow: 'visible' }}
+        >
+          <defs>
+            {/* Clip path for the glass interior */}
+            <clipPath id={`glass-clip-${log.id}`}>
+              <path d="M6,2 L54,2 Q52,78 46,78 L14,78 Q8,78 6,2 Z" />
+            </clipPath>
 
-        {/* Bottle components */}
-        {isBottle && (
-          <>
-            {/* Cap */}
-            <div style={{
-              width: '50%',
-              height: '10%',
-              background: 'linear-gradient(90deg, #94A3B8, #E2E8F0, #94A3B8)',
-              borderRadius: '2px 2px 0 0',
-              zIndex: 3,
-            }} />
-            {/* Neck */}
-            <div style={{
-              width: '40%',
-              height: '10%',
-              background: 'rgba(255, 255, 255, 0.4)',
-              borderLeft: '2px solid rgba(255,255,255,0.7)',
-              borderRight: '2px solid rgba(255,255,255,0.7)',
-              zIndex: 2,
-            }} />
-          </>
-        )}
+            {/* Liquid gradient */}
+            <linearGradient id={`liquid-grad-${log.id}`} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={liquid.base} />
+              <stop offset="100%" stopColor={liquid.dark} />
+            </linearGradient>
 
-        {/* Main Body */}
-        <div style={{
-          width: '100%',
-          height: isBottle ? '80%' : '100%',
-          border: '2px solid rgba(255, 255, 255, 0.8)',
-          borderTop: isBottle ? 'none' : '2px solid rgba(255, 255, 255, 0.5)',
-          borderRadius: isBottle ? '8px 8px 12px 12px' : '4px 4px 16px 16px',
-          position: 'relative',
-          overflow: 'hidden',
-          background: 'rgba(255, 255, 255, 0.1)',
-          boxShadow: 'inset 0 -4px 12px rgba(0,0,0,0.05), 0 8px 12px -4px rgba(0, 0, 0, 0.1)',
-          backdropFilter: 'blur(2px)',
-          clipPath: isBottle ? 'none' : 'polygon(0 0, 100% 0, 90% 100%, 10% 100%)', // Flared glass shape
-        }}>
-          {/* Glass reflection rim */}
-          {!isBottle && (
-            <div style={{
-              position: 'absolute',
-              top: '-2px',
-              left: 0,
-              right: 0,
-              height: '6px',
-              background: 'rgba(255,255,255,0.8)',
-              borderRadius: '50%',
-              zIndex: 5,
-            }} />
-          )}
+            {/* Glass highlight gradient */}
+            <linearGradient id={`glass-shine-${log.id}`} x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="rgba(255,255,255,0)" />
+              <stop offset="30%" stopColor="rgba(255,255,255,0.5)" />
+              <stop offset="50%" stopColor="rgba(255,255,255,0.7)" />
+              <stop offset="70%" stopColor="rgba(255,255,255,0.3)" />
+              <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+            </linearGradient>
+          </defs>
 
-          {/* The Liquid */}
-          <div style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: isBottle ? '85%' : '90%', // Fill level
-            background: `linear-gradient(180deg, ${baseColor} 0%, ${darkColor} 100%)`,
-            opacity: 0.9,
-            transition: 'height 0.5s ease-in-out',
-            boxShadow: 'inset 0 4px 6px rgba(255,255,255,0.3)',
-          }}>
-            {/* Liquid Surface */}
-            <div style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              height: '4px',
-              background: 'rgba(255, 255, 255, 0.4)',
-            }} />
+          {/* Glass outline — tapered shape wider at top, narrower at bottom */}
+          <path
+            d="M5,1 L55,1 Q53,79 45,79 L15,79 Q7,79 5,1 Z"
+            fill="none"
+            stroke="#CBD5E1"
+            strokeWidth="1.5"
+          />
 
-            {/* Liquid highlight (Glass curve) */}
-            <div style={{
-              position: 'absolute',
-              top: 0,
-              left: '15%',
-              width: '15%',
-              height: '100%',
-              background: 'linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%)',
-              borderRadius: '50%',
-            }} />
-          </div>
+          {/* Glass interior background (transparent/empty) */}
+          <path
+            d="M6,2 L54,2 Q52,78 46,78 L14,78 Q8,78 6,2 Z"
+            fill="rgba(240, 248, 255, 0.3)"
+          />
 
-          {/* Container highlight overlay */}
-          <div style={{
-            position: 'absolute',
-            top: 0,
-            left: '5%',
-            width: '20%',
-            height: '100%',
-            background: 'linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%)',
-            pointerEvents: 'none',
-            zIndex: 10,
-          }} />
-        </div>
+          {/* Liquid fill — clipped to glass interior */}
+          <g clipPath={`url(#glass-clip-${log.id})`}>
+            <rect
+              x="0"
+              y={80 - (80 * fillPercent / 100)}
+              width="60"
+              height={80 * fillPercent / 100}
+              fill={`url(#liquid-grad-${log.id})`}
+              opacity={liquid.opacity}
+            />
+
+            {/* Liquid surface line */}
+            <rect
+              x="6"
+              y={80 - (80 * fillPercent / 100)}
+              width="48"
+              height="3"
+              fill={liquid.surface}
+              rx="1.5"
+            />
+
+            {/* Tiny bubbles for water / sweet drinks */}
+            {(log.type === 'water' || log.type === 'sweet') && (
+              <>
+                <circle cx="20" cy={80 - (80 * fillPercent / 100) + 15} r="1.5" fill="rgba(255,255,255,0.5)" />
+                <circle cx="35" cy={80 - (80 * fillPercent / 100) + 25} r="1" fill="rgba(255,255,255,0.4)" />
+                <circle cx="28" cy={80 - (80 * fillPercent / 100) + 35} r="1.8" fill="rgba(255,255,255,0.35)" />
+              </>
+            )}
+
+            {/* Coffee crema layer */}
+            {log.type === 'coffee' && (
+              <rect
+                x="6"
+                y={80 - (80 * fillPercent / 100)}
+                width="48"
+                height="6"
+                fill="#A67B3D"
+                opacity="0.7"
+                rx="2"
+              />
+            )}
+          </g>
+
+          {/* Glass highlight/reflection on the left side */}
+          <path
+            d="M12,4 L18,4 Q16,76 14,76 L10,76 Q8,76 12,4 Z"
+            fill={`url(#glass-shine-${log.id})`}
+            opacity="0.6"
+          />
+
+          {/* Glass rim at top */}
+          <ellipse cx="30" cy="2" rx="25" ry="2.5" fill="rgba(255,255,255,0.8)" stroke="#CBD5E1" strokeWidth="0.5" />
+        </svg>
       </div>
 
       {/* Info */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '4px' }}>
-        <span style={{ fontSize: '12px', fontWeight: 700, color: '#1E293B' }}>{log.amountMl}ml</span>
-        <span style={{ fontSize: '10px', color: '#64748B', fontWeight: 500 }}>{typeLabels[log.type] || 'อื่นๆ'}</span>
-        <span style={{ fontSize: '9px', color: '#94A3B8' }}>{formatTime(log.time)}</span>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '2px' }}>
+        <span style={{ fontSize: '11px', fontWeight: 700, color: '#1E293B' }}>{log.amountMl}ml</span>
+        <span style={{ fontSize: '9px', color: '#64748B', fontWeight: 500 }}>{typeLabels[log.type] || 'อื่นๆ'}</span>
+        <span style={{ fontSize: '8px', color: '#94A3B8' }}>{formatTime(log.time)}</span>
       </div>
     </div>
   );
